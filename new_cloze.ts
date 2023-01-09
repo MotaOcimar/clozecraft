@@ -1,41 +1,44 @@
 
 
 // Example of cloze: "==cloze1==^[1]"
+// or "==cloze==^[ash]"
 let clozeBegin = "=="
 let clozeEnd = "=="
-let clozeNumIndicatorBegin = "^["
-let clozeNumIndicatorEnd = "]"
+let clozeSeqIndicatorBegin = "^["
+let clozeSeqIndicatorEnd = "]"
 
 
-function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+function escapeRegExp(str: string) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 
 interface Cloze {
     text: string;
-    num: number;
+    seq: number;
 }
 
 function getClozes(text: string): Cloze[] {
     
     const clozes: Cloze[] = [];
-    let num = 0;
-    let match;
+    let match: RegExpExecArray | null;
 
     // for "{{c1:text}}" is const regex = /\{\{c(\d+):([^}]+)\}\}/g;
     // for "==text==^[1]" is const regex = /==([^=]+)==\^\[(\d+)\]/g;
+    // for "==text==^[a]" is const regex = /==([^=]+)==\^\[([ash]+)\]/g;
+    // for both is const regex = /==([^=]+)==\^\[(\d+|[ash]+)\]/g;
+
     // Scape regex special characters
     let cBegin = escapeRegExp(clozeBegin);
     let cEnd = escapeRegExp(clozeEnd);
-    let cnBegin = escapeRegExp(clozeNumIndicatorBegin);
-    let cnEnd = escapeRegExp(clozeNumIndicatorEnd);
+    let csBegin = escapeRegExp(clozeSeqIndicatorBegin);
+    let csEnd = escapeRegExp(clozeSeqIndicatorEnd);
 
-    const regex = new RegExp(`${cBegin}([^${cEnd}]+)${cEnd}${cnBegin}(\\d+)${cnEnd}`, "g");
+    const regex = new RegExp(`${cBegin}([^${cEnd}]+)${cEnd}${csBegin}(\\d+|[ash]+)${csEnd}`, "g");
     while (match = regex.exec(text)) {
         clozes.push({
             text: match[1],
-            num: parseInt(match[2])
+            seq: parseInt(match[2])
         });
     }
     return clozes;
@@ -44,10 +47,10 @@ function getClozes(text: string): Cloze[] {
 function getFront(text: string, clozes: Cloze[], ask: number[], hide: number[]): string {
     let newText = text;
     for (const cloze of clozes) {
-        let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeNumIndicatorBegin}${cloze.num}${clozeNumIndicatorEnd}`;
-        if (ask.indexOf(cloze.num) !== -1) {
+        let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqIndicatorBegin}${cloze.seq}${clozeSeqIndicatorEnd}`;
+        if (ask.indexOf(cloze.seq) !== -1) {
             newText = newText.replace(oldText, `**[...]**`);
-        } else if (hide.indexOf(cloze.num) !== -1) {
+        } else if (hide.indexOf(cloze.seq) !== -1) {
             newText = newText.replace(oldText, `...`);
         } else {
             newText = newText.replace(oldText, cloze.text);
@@ -59,8 +62,8 @@ function getFront(text: string, clozes: Cloze[], ask: number[], hide: number[]):
 function getBack(text: string, clozes: Cloze[], hide: number[]): string {
     let newText = text;
     for (const cloze of clozes) {
-        let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeNumIndicatorBegin}${cloze.num}${clozeNumIndicatorEnd}`;
-        if (hide.indexOf(cloze.num) !== -1) {
+        let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqIndicatorBegin}${cloze.seq}${clozeSeqIndicatorEnd}`;
+        if (hide.indexOf(cloze.seq) !== -1) {
             newText = newText.replace(oldText, `...`);
         } else {
             newText = newText.replace(oldText, cloze.text);

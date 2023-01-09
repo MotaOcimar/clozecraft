@@ -1,27 +1,29 @@
 // Example of cloze: "==cloze1==^[1]"
+// or "==cloze==^[ash]"
 var clozeBegin = "==";
 var clozeEnd = "==";
-var clozeNumIndicatorBegin = "^[";
-var clozeNumIndicatorEnd = "]";
-function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+var clozeSeqIndicatorBegin = "^[";
+var clozeSeqIndicatorEnd = "]";
+function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 function getClozes(text) {
     var clozes = [];
-    var num = 0;
     var match;
     // for "{{c1:text}}" is const regex = /\{\{c(\d+):([^}]+)\}\}/g;
     // for "==text==^[1]" is const regex = /==([^=]+)==\^\[(\d+)\]/g;
+    // for "==text==^[a]" is const regex = /==([^=]+)==\^\[([ash]+)\]/g;
+    // for both is const regex = /==([^=]+)==\^\[(\d+|[ash]+)\]/g;
     // Scape regex special characters
     var cBegin = escapeRegExp(clozeBegin);
     var cEnd = escapeRegExp(clozeEnd);
-    var cnBegin = escapeRegExp(clozeNumIndicatorBegin);
-    var cnEnd = escapeRegExp(clozeNumIndicatorEnd);
-    var regex = new RegExp("".concat(cBegin, "([^").concat(cEnd, "]+)").concat(cEnd).concat(cnBegin, "(\\d+)").concat(cnEnd), "g");
+    var csBegin = escapeRegExp(clozeSeqIndicatorBegin);
+    var csEnd = escapeRegExp(clozeSeqIndicatorEnd);
+    var regex = new RegExp("".concat(cBegin, "([^").concat(cEnd, "]+)").concat(cEnd).concat(csBegin, "(\\d+|[ash]+)").concat(csEnd), "g");
     while (match = regex.exec(text)) {
         clozes.push({
             text: match[1],
-            num: parseInt(match[2])
+            seq: parseInt(match[2])
         });
     }
     return clozes;
@@ -30,11 +32,11 @@ function getFront(text, clozes, ask, hide) {
     var newText = text;
     for (var _i = 0, clozes_1 = clozes; _i < clozes_1.length; _i++) {
         var cloze = clozes_1[_i];
-        var oldText = "".concat(clozeBegin).concat(cloze.text).concat(clozeEnd).concat(clozeNumIndicatorBegin).concat(cloze.num).concat(clozeNumIndicatorEnd);
-        if (ask.indexOf(cloze.num) !== -1) {
+        var oldText = "".concat(clozeBegin).concat(cloze.text).concat(clozeEnd).concat(clozeSeqIndicatorBegin).concat(cloze.seq).concat(clozeSeqIndicatorEnd);
+        if (ask.indexOf(cloze.seq) !== -1) {
             newText = newText.replace(oldText, "**[...]**");
         }
-        else if (hide.indexOf(cloze.num) !== -1) {
+        else if (hide.indexOf(cloze.seq) !== -1) {
             newText = newText.replace(oldText, "...");
         }
         else {
@@ -47,8 +49,8 @@ function getBack(text, clozes, hide) {
     var newText = text;
     for (var _i = 0, clozes_2 = clozes; _i < clozes_2.length; _i++) {
         var cloze = clozes_2[_i];
-        var oldText = "".concat(clozeBegin).concat(cloze.text).concat(clozeEnd).concat(clozeNumIndicatorBegin).concat(cloze.num).concat(clozeNumIndicatorEnd);
-        if (hide.indexOf(cloze.num) !== -1) {
+        var oldText = "".concat(clozeBegin).concat(cloze.text).concat(clozeEnd).concat(clozeSeqIndicatorBegin).concat(cloze.seq).concat(clozeSeqIndicatorEnd);
+        if (hide.indexOf(cloze.seq) !== -1) {
             newText = newText.replace(oldText, "...");
         }
         else {
