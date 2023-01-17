@@ -18,18 +18,13 @@ export class ClozeClassicNote implements ClozeNote {
 
         let match: RegExpExecArray | null;
 
-        // for "{{c1:text}}" is const regex = /\{\{c(\d+):([^}]+)\}\}/g;
-        // for "==text==^[1]" is const regex = /==([^=]+)==\^\[(\d+)\]/g;
-        // for "==text==^[a]" is const regex = /==([^=]+)==\^\[([ash]+)\]/g;
-        // for both is const regex = /==([^=]+)==\^\[(\d+|[ash]+)\]/g;
-
         // Scape regex special characters
         let cBegin = escapeRegExp(clozeBegin);
         let cEnd = escapeRegExp(clozeEnd);
         let csBegin = escapeRegExp(clozeSeqIndicatorBegin);
         let csEnd = escapeRegExp(clozeSeqIndicatorEnd);
 
-        const regex = new RegExp(`${cBegin}([^${cEnd}]+)${cEnd}${csBegin}(\\d+|[ash]+)${csEnd}`, "g");
+        const regex = new RegExp(`${cBegin}([^${cEnd}]+)${cEnd}${csBegin}(\\d+)${csEnd}`, "g");
         while (match = regex.exec(text)) {
             this.clozes.push({
                 text: match[1],
@@ -42,10 +37,11 @@ export class ClozeClassicNote implements ClozeNote {
         let newText = this.text;
         for (const cloze of this.clozes) {
             let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqIndicatorBegin}${cloze.seq}${clozeSeqIndicatorEnd}`;
+
             if (cloze.seq === card) {
-                newText = newText.replace(oldText, `**[...]**`);
+                newText = newText.replace(oldText, `**[...]**`); // Hide asked cloze
             } else {
-                newText = newText.replace(oldText, cloze.text);
+                newText = newText.replace(oldText, cloze.text); // Just show
             }
         }
         return newText;
@@ -55,10 +51,11 @@ export class ClozeClassicNote implements ClozeNote {
         let newText = this.text;
         for (const cloze of this.clozes) {
             let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqIndicatorBegin}${cloze.seq}${clozeSeqIndicatorEnd}`;
+
             if (cloze.seq === card) {
-                newText = newText.replace(oldText, `**${cloze.text}**`);
+                newText = newText.replace(oldText, `**${cloze.text}**`); // Show as answer
             } else {
-                newText = newText.replace(oldText, cloze.text);
+                newText = newText.replace(oldText, cloze.text); // Just show
             }
         }
         return newText;

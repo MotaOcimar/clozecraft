@@ -8,7 +8,7 @@ export let clozeSeqIndicatorEnd = "]"
 
 export interface Cloze {
     text: string;
-    seq: number|string;
+    seq: number | string;
 }
 
 export interface ClozeNote {
