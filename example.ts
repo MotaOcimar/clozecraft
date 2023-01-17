@@ -3,16 +3,14 @@ import { ClozeClassicNote } from "./cloze_classic";
 import { ClozeNote } from "./cloze";
 
 
-
-
 // Cloze Overlapping example usage
-let text = "This is a ==cloze1==^[ash] ==cloze2==^[sha] ==cloze3==^[has]";
+let text = "This is a ==cloze1==^[ash] ==cloze2==^[sha] ==cloze3==^[ha]";
 let clozeNote: ClozeNote = new ClozeOLNote(text);
 
 console.log(clozeNote.clozes);
 console.log(clozeNote.text);
 
-let card = 1;
+let card = 3;
 
 let front = clozeNote.getFront(card);
 console.log(front);
@@ -26,10 +24,9 @@ clozeNote = new ClozeClassicNote(text);
 console.log(clozeNote.clozes);
 console.log(clozeNote.text);
 
-card = 1;
+card = 3;
 
 front = clozeNote.getFront(card);
 console.log(front);
 back = clozeNote.getBack(card);
 console.log(back);
-

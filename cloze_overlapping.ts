@@ -1,5 +1,5 @@
-import { escapeRegExp } from "./utils";
-import { clozeBegin, clozeEnd, clozeSeqIndicatorBegin, clozeSeqIndicatorEnd } from "./cloze";
+import { clozeBegin, clozeEnd, clozeSeqBegin, clozeSeqEnd } from "./cloze";
+import { clozeBeginEsc, clozeEndEsc, clozeSeqBeginEsc, clozeSeqEndEsc } from "./cloze";
 import { Cloze, ClozeNote } from "./cloze";
 
 
@@ -11,50 +11,52 @@ class ClozeOL implements Cloze {
 export class ClozeOLNote implements ClozeNote {
     text: string;
     clozes: ClozeOL[];
+    numCards: number;
 
 
     constructor(text: string) {
         this.text = text;
         this.clozes = [];
+        this.numCards = 0;
 
         let match: RegExpExecArray | null;
 
-        // Scape regex special characters
-        let cBegin = escapeRegExp(clozeBegin);
-        let cEnd = escapeRegExp(clozeEnd);
-        let csBegin = escapeRegExp(clozeSeqIndicatorBegin);
-        let csEnd = escapeRegExp(clozeSeqIndicatorEnd);
-
-        const regex = new RegExp(`${cBegin}([^${cEnd}]+)${cEnd}${csBegin}([ash]+)${csEnd}`, "g");
+        const regex = new RegExp(`${clozeBeginEsc}([^${clozeEndEsc}]+)${clozeEndEsc}${clozeSeqBeginEsc}([ash]+)${clozeSeqEndEsc}`, "g");
         while (match = regex.exec(text)) {
-            this.clozes.push({
+
+            let newCloze: ClozeOL = {
                 text: match[1],
                 seq: match[2]
-            });
-        }
-
-        // Ensures that all clozes have the same size of seq
-        let maxSeq = 0;
-        for (const cloze of this.clozes) {
-            if (cloze.seq.length > maxSeq) {
-                maxSeq = cloze.seq.length;
             }
-        }
-        for (const cloze of this.clozes) {
-            if (cloze.seq.length < maxSeq) {
-                while (cloze.seq.length < maxSeq) {
-                    cloze.seq += "s";
-                }
+
+            this.clozes.push(newCloze);
+
+            // Get the max seq length
+            if (this.numCards < newCloze.seq.length) {
+                this.numCards = newCloze.seq.length;
             }
         }
     }
 
     getFront(card: number): string {
-        card = card - 1; // card 1 is the first card
+        card = card - 1; // card 1 is the first card, but the array starts at 0
+
+        if (card >= this.numCards || card < 0) {
+            throw new Error(`Card ${card} does not exist`);
+        }
 
         let newText = this.text;
         for (const cloze of this.clozes) {
-            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqIndicatorBegin}${cloze.seq}${clozeSeqIndicatorEnd}`;
+            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqBegin}${cloze.seq}${clozeSeqEnd}`;
+
+            // If the cloze has a sequence that does not specify the action on a certain card 
+            // (a shorter sequence length than on other clozes), the default action will be just show
+            // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
+            // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
+            if ( card >= cloze.seq.length ) {
+                newText = newText.replace(oldText, cloze.text); // Just show
+                continue;
+            }
 
             switch (cloze.seq[card]) {
                 case "a":
@@ -72,11 +74,24 @@ export class ClozeOLNote implements ClozeNote {
     }
 
     getBack(card: number): string {
-        card = card - 1; // card 1 is the first card
+        card = card - 1; // card 1 is the first card, but the array starts at 0
+
+        if (card >= this.numCards || card < 0) {
+            throw new Error(`Card ${card} does not exist`);
+        }
 
         let newText = this.text;
         for (const cloze of this.clozes) {
-            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqIndicatorBegin}${cloze.seq}${clozeSeqIndicatorEnd}`;
+            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqBegin}${cloze.seq}${clozeSeqEnd}`;
+
+            // If the cloze has a sequence that does not specify the action on a certain card 
+            // (a shorter sequence length than on other clozes), the default action will be just show
+            // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
+            // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
+            if ( card >= cloze.seq.length ) {
+                newText = newText.replace(oldText, cloze.text); // Just show
+                continue;
+            }
 
             switch (cloze.seq[card]) {
                 case "a":

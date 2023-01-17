@@ -1,5 +1,5 @@
-import { escapeRegExp } from "./utils";
-import { clozeBegin, clozeEnd, clozeSeqIndicatorBegin, clozeSeqIndicatorEnd } from "./cloze";
+import { clozeBegin, clozeEnd, clozeSeqBegin, clozeSeqEnd } from "./cloze";
+import { clozeBeginEsc, clozeEndEsc, clozeSeqBeginEsc, clozeSeqEndEsc } from "./cloze";
 import { Cloze, ClozeNote } from "./cloze";
 
 
@@ -11,32 +11,41 @@ class ClozeClassic implements Cloze {
 export class ClozeClassicNote implements ClozeNote {
     text: string;
     clozes: ClozeClassic[];
+    numCards: number;
+
 
     constructor(text: string) {
         this.text = text;
         this.clozes = [];
+        this.numCards = 0;
 
         let match: RegExpExecArray | null;
 
-        // Scape regex special characters
-        let cBegin = escapeRegExp(clozeBegin);
-        let cEnd = escapeRegExp(clozeEnd);
-        let csBegin = escapeRegExp(clozeSeqIndicatorBegin);
-        let csEnd = escapeRegExp(clozeSeqIndicatorEnd);
-
-        const regex = new RegExp(`${cBegin}([^${cEnd}]+)${cEnd}${csBegin}(\\d+)${csEnd}`, "g");
+        const regex = new RegExp(`${clozeBeginEsc}([^${clozeEndEsc}]+)${clozeEndEsc}${clozeSeqBeginEsc}(\\d+)${clozeSeqEndEsc}`, "g");
         while (match = regex.exec(text)) {
-            this.clozes.push({
+
+            let newCloze: ClozeClassic = {
                 text: match[1],
                 seq: parseInt(match[2])
-            });
+            }
+
+            this.clozes.push(newCloze);
+
+            // Get the max seq
+            if (this.numCards < newCloze.seq) {
+                this.numCards = newCloze.seq;
+            }
         }
     }
 
     getFront(card: number): string {
+        if (card > this.numCards || card < 1) {
+            throw new Error(`Card ${card} does not exist`);
+        }
+
         let newText = this.text;
         for (const cloze of this.clozes) {
-            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqIndicatorBegin}${cloze.seq}${clozeSeqIndicatorEnd}`;
+            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqBegin}${cloze.seq}${clozeSeqEnd}`;
 
             if (cloze.seq === card) {
                 newText = newText.replace(oldText, `**[...]**`); // Hide asked cloze
@@ -48,9 +57,13 @@ export class ClozeClassicNote implements ClozeNote {
     }
 
     getBack(card: number): string {
+        if (card > this.numCards || card < 1) {
+            throw new Error(`Card ${card} does not exist`);
+        }
+
         let newText = this.text;
         for (const cloze of this.clozes) {
-            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqIndicatorBegin}${cloze.seq}${clozeSeqIndicatorEnd}`;
+            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqBegin}${cloze.seq}${clozeSeqEnd}`;
 
             if (cloze.seq === card) {
                 newText = newText.replace(oldText, `**${cloze.text}**`); // Show as answer
