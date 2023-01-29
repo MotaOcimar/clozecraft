@@ -19,6 +19,11 @@ export class ClozeOLNote implements ClozeNote {
         this.clozes = [];
         this.numCards = 0;
 
+        this.initParsing(text, delimiters);
+    }
+
+    protected initParsing(text: string, delimiters: ClozeDelimiters[]) {
+        
         let match: RegExpExecArray | null;
 
         for (const cd of delimiters) {

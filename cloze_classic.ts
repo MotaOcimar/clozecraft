@@ -1,7 +1,7 @@
 import { Cloze, ClozeNote, ClozeDelimiters } from "./cloze";
 
 
-class ClozeClassic implements Cloze {
+export class ClozeClassic implements Cloze {
     raw: string;
     text: string;
     seq: number;
@@ -18,6 +18,11 @@ export class ClozeClassicNote implements ClozeNote {
         this.text = text;
         this.clozes = [];
         this.numCards = 0;
+
+        this.initParsing(text, delimiters);
+    }
+
+    protected initParsing(text: string, delimiters: ClozeDelimiters[]): void {
 
         let match: RegExpExecArray | null;
 

@@ -1,5 +1,6 @@
 import { ClozeOLNote } from "./cloze_overlapping";
 import { ClozeClassicNote } from "./cloze_classic";
+import { ClozeSimpleNote } from "./cloze_simple";
 import { ClozeNote, ClozeDelimiters } from "./cloze";
 
 
@@ -50,6 +51,21 @@ console.log(clozeNote.clozes);
 console.log(clozeNote.text);
 
 card = 1;
+
+front = clozeNote.getFront(card);
+console.log(front);
+back = clozeNote.getBack(card);
+console.log(back);
+
+
+// Cloze Simple example usage
+text = "This is a ==cloze1==^[hint1] {cloze2}[hint2] ==cloze3==";
+clozeNote = new ClozeSimpleNote(text, delimiters);
+
+console.log(clozeNote.clozes);
+console.log(clozeNote.text);
+
+card = 2;
 
 front = clozeNote.getFront(card);
 console.log(front);
