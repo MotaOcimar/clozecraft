@@ -46,21 +46,22 @@ export class ClozeClassicNote implements ClozeNote {
             throw new Error(`Card ${card} does not exist`);
         }
 
-        let newText = this.text;
+        let frontText = this.text;
         for (const cloze of this.clozes) {
 
-            if (cloze.seq === card) {
-                if (cloze.hint !== undefined ) {
-                    newText = newText.replace(cloze.raw, `**[${cloze.hint}]**`); // Hide asked cloze with hint
-                    continue
-                }
-                newText = newText.replace(cloze.raw, `**[...]**`); // Hide asked cloze
+            if (cloze.seq !== card) {
+                frontText = frontText.replace(cloze.raw, cloze.text); // Just show
+                continue;
+            }
+
+            if (cloze.hint !== undefined) {
+                frontText = frontText.replace(cloze.raw, `**[${cloze.hint}]**`); // Hide asked cloze with hint
                 continue
             }
 
-            newText = newText.replace(cloze.raw, cloze.text); // Just show
+            frontText = frontText.replace(cloze.raw, `**[...]**`); // Hide asked cloze
         }
-        return newText;
+        return frontText;
     }
 
     getBack(card: number): string {
@@ -68,15 +69,15 @@ export class ClozeClassicNote implements ClozeNote {
             throw new Error(`Card ${card} does not exist`);
         }
 
-        let newText = this.text;
+        let backText = this.text;
         for (const cloze of this.clozes) {
 
             if (cloze.seq === card) {
-                newText = newText.replace(cloze.raw, `**${cloze.text}**`); // Show as answer
+                backText = backText.replace(cloze.raw, `**${cloze.text}**`); // Show as answer
             } else {
-                newText = newText.replace(cloze.raw, cloze.text); // Just show
+                backText = backText.replace(cloze.raw, cloze.text); // Just show
             }
         }
-        return newText;
+        return backText;
     }
 }

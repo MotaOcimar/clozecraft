@@ -42,13 +42,13 @@ export class ClozeOLNote implements ClozeNote {
     }
 
     getFront(card: number): string {
-        card = card - 1; // card 1 is the first card, but the array starts at 0
-
-        if (card >= this.numCards || card < 0) {
+        if (card > this.numCards || card < 1) {
             throw new Error(`Card ${card} does not exist`);
         }
 
-        let newText = this.text;
+        card = card - 1; // card 1 is the first card, but the array starts at 0
+
+        let frontText = this.text;
         for (const cloze of this.clozes) {
 
             // If the cloze has a sequence that does not specify the action on a certain card 
@@ -56,37 +56,37 @@ export class ClozeOLNote implements ClozeNote {
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
             if ( card >= cloze.seq.length ) {
-                newText = newText.replace(cloze.raw, cloze.text); // Just show
+                frontText = frontText.replace(cloze.raw, cloze.text); // Just show
                 continue;
             }
 
             switch (cloze.seq[card]) {
                 case "a":
                     if (cloze.hint !== undefined) {
-                        newText = newText.replace(cloze.raw, `**[${cloze.hint}]**`); // Hide asked cloze with hint
+                        frontText = frontText.replace(cloze.raw, `**[${cloze.hint}]**`); // Hide asked cloze with hint
                         break;
                     }
-                    newText = newText.replace(cloze.raw, `**[...]**`); // Hide asked cloze
+                    frontText = frontText.replace(cloze.raw, `**[...]**`); // Hide asked cloze
                     break;
                 case "h":
-                    newText = newText.replace(cloze.raw, `...`); // Just hide
+                    frontText = frontText.replace(cloze.raw, `...`); // Just hide
                     break;
                 case "s":
-                    newText = newText.replace(cloze.raw, cloze.text); // Just show
+                    frontText = frontText.replace(cloze.raw, cloze.text); // Just show
                     break;
             }
         }
-        return newText;
+        return frontText;
     }
 
     getBack(card: number): string {
-        card = card - 1; // card 1 is the first card, but the array starts at 0
-
-        if (card >= this.numCards || card < 0) {
+        if (card > this.numCards || card < 1) {
             throw new Error(`Card ${card} does not exist`);
         }
 
-        let newText = this.text;
+        card = card - 1; // card 1 is the first card, but the array starts at 0
+
+        let backText = this.text;
         for (const cloze of this.clozes) {
 
             // If the cloze has a sequence that does not specify the action on a certain card 
@@ -94,22 +94,22 @@ export class ClozeOLNote implements ClozeNote {
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
             if ( card >= cloze.seq.length ) {
-                newText = newText.replace(cloze.raw, cloze.text); // Just show
+                backText = backText.replace(cloze.raw, cloze.text); // Just show
                 continue;
             }
 
             switch (cloze.seq[card]) {
                 case "a":
-                    newText = newText.replace(cloze.raw, `**${cloze.text}**`); // Show as answer
+                    backText = backText.replace(cloze.raw, `**${cloze.text}**`); // Show as answer
                     break;
                 case "h":
-                    newText = newText.replace(cloze.raw, `...`); // Just hide
+                    backText = backText.replace(cloze.raw, `...`); // Just hide
                     break;
                 case "s":
-                    newText = newText.replace(cloze.raw, cloze.text); // Just show
+                    backText = backText.replace(cloze.raw, cloze.text); // Just show
                     break;
             }
         }
-        return newText;
+        return backText;
     }
 }
