@@ -1,11 +1,36 @@
 import { ClozeOLNote } from "./cloze_overlapping";
 import { ClozeClassicNote } from "./cloze_classic";
-import { ClozeNote } from "./cloze";
+import { ClozeNote, ClozeDelimiters } from "./cloze";
 
+
+// Example of cloze classic:     "==cloze1==%%1%%^[hint]"
+// Example of cloze overlapping: "==cloze==%%ash%%^[hint]"
+let clozeDelimiters1 = ClozeDelimiters.Builder().
+    setBegin("==").
+    setEnd("==").
+    setSeqBegin("%%").
+    setSeqEnd("%%").
+    setHintBegin("^[").
+    setHintEnd("]").
+    build();
+
+// Example of cloze classic:     "{cloze1}:1:[hint]"
+// Example of cloze overlapping: "{cloze}:ash:[hint]"
+let clozeDelimiters2 = ClozeDelimiters.Builder().
+    setBegin("{").
+    setEnd("}").
+    setSeqBegin(":").
+    setSeqEnd(":").
+    setHintBegin("[").
+    setHintEnd("]").
+    build();
+
+
+let delimiters = [clozeDelimiters1, clozeDelimiters2];
 
 // Cloze Overlapping example usage
-let text = "This is a ==cloze1==%%ash%%^[hint1] ==cloze2==%%ha%% ==cloze3==%%sha%%^[hint3]";
-let clozeNote: ClozeNote = new ClozeOLNote(text);
+let text = "This is a ==cloze1==%%ash%%^[hint1] ==cloze2==%%ha%% {cloze3}:sha:[hint3]";
+let clozeNote: ClozeNote = new ClozeOLNote(text, delimiters);
 
 console.log(clozeNote.clozes);
 console.log(clozeNote.text);
@@ -18,8 +43,8 @@ let back = clozeNote.getBack(card);
 console.log(back);
 
 // Cloze Classic example usage
-text = "This is a ==cloze1==%%1%%^[hint1] ==cloze2==%%2%% ==cloze3==%%3%%";
-clozeNote = new ClozeClassicNote(text);
+text = "This is a ==cloze1==%%1%%^[hint1] ==cloze2==%%2%% {cloze3}:3:[hint3]";
+clozeNote = new ClozeClassicNote(text, delimiters);
 
 console.log(clozeNote.clozes);
 console.log(clozeNote.text);

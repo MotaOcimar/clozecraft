@@ -1,5 +1,4 @@
-import { clozeBeginEsc, clozeEndEsc, clozeSeqBeginEsc, clozeSeqEndEsc, clozeHintBeginEsc, clozeHintEndEsc } from "./cloze";
-import { Cloze, ClozeNote } from "./cloze";
+import { Cloze, ClozeNote, ClozeDelimiters } from "./cloze";
 
 
 class ClozeOL implements Cloze {
@@ -15,28 +14,31 @@ export class ClozeOLNote implements ClozeNote {
     numCards: number;
 
 
-    constructor(text: string) {
+    constructor(text: string, delimiters: ClozeDelimiters[]) {
         this.text = text;
         this.clozes = [];
         this.numCards = 0;
 
         let match: RegExpExecArray | null;
 
-        const regex = new RegExp(`(${clozeBeginEsc}([^${clozeEndEsc}]+)${clozeEndEsc}${clozeSeqBeginEsc}([ash]+)${clozeSeqEndEsc}(?:${clozeHintBeginEsc}([^${clozeHintEndEsc}]+)${clozeHintEndEsc})?)`, "g");
-        while (match = regex.exec(text)) {
+        for (const cd of delimiters) {
 
-            let newCloze: ClozeOL = {
-                raw: match[1],
-                text: match[2],
-                seq: match[3],
-                hint: match[4]
-            }
+            const regex = new RegExp(`(${cd.beginEsc}([^${cd.endEsc}]+)${cd.endEsc}${cd.seqBeginEsc}([ash]+)${cd.seqEndEsc}(?:${cd.hintBeginEsc}([^${cd.hintEndEsc}]+)${cd.hintEndEsc})?)`, "g");
+            while (match = regex.exec(text)) {
 
-            this.clozes.push(newCloze);
+                let newCloze: ClozeOL = {
+                    raw: match[1],
+                    text: match[2],
+                    seq: match[3],
+                    hint: match[4]
+                }
 
-            // Get the max seq length
-            if (this.numCards < newCloze.seq.length) {
-                this.numCards = newCloze.seq.length;
+                this.clozes.push(newCloze);
+
+                // Get the max seq length
+                if (this.numCards < newCloze.seq.length) {
+                    this.numCards = newCloze.seq.length;
+                }
             }
         }
     }
