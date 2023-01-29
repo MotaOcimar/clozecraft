@@ -1,11 +1,12 @@
-import { clozeBegin, clozeEnd, clozeSeqBegin, clozeSeqEnd } from "./cloze";
-import { clozeBeginEsc, clozeEndEsc, clozeSeqBeginEsc, clozeSeqEndEsc } from "./cloze";
+import { clozeBeginEsc, clozeEndEsc, clozeSeqBeginEsc, clozeSeqEndEsc, clozeHintBeginEsc, clozeHintEndEsc } from "./cloze";
 import { Cloze, ClozeNote } from "./cloze";
 
 
 class ClozeClassic implements Cloze {
+    raw: string;
     text: string;
     seq: number;
+    hint: string;
 }
 
 export class ClozeClassicNote implements ClozeNote {
@@ -21,12 +22,14 @@ export class ClozeClassicNote implements ClozeNote {
 
         let match: RegExpExecArray | null;
 
-        const regex = new RegExp(`${clozeBeginEsc}([^${clozeEndEsc}]+)${clozeEndEsc}${clozeSeqBeginEsc}(\\d+)${clozeSeqEndEsc}`, "g");
+        const regex = new RegExp(`(${clozeBeginEsc}([^${clozeEndEsc}]+)${clozeEndEsc}${clozeSeqBeginEsc}(\\d+)${clozeSeqEndEsc}(?:${clozeHintBeginEsc}([^${clozeHintEndEsc}]+)${clozeHintEndEsc})?)`, "g");
         while (match = regex.exec(text)) {
 
             let newCloze: ClozeClassic = {
-                text: match[1],
-                seq: parseInt(match[2])
+                raw: match[1],
+                text: match[2],
+                seq: parseInt(match[3]),
+                hint: match[4]
             }
 
             this.clozes.push(newCloze);
@@ -45,13 +48,17 @@ export class ClozeClassicNote implements ClozeNote {
 
         let newText = this.text;
         for (const cloze of this.clozes) {
-            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqBegin}${cloze.seq}${clozeSeqEnd}`;
 
             if (cloze.seq === card) {
-                newText = newText.replace(oldText, `**[...]**`); // Hide asked cloze
-            } else {
-                newText = newText.replace(oldText, cloze.text); // Just show
+                if (cloze.hint !== undefined ) {
+                    newText = newText.replace(cloze.raw, `**[${cloze.hint}]**`); // Hide asked cloze with hint
+                    continue
+                }
+                newText = newText.replace(cloze.raw, `**[...]**`); // Hide asked cloze
+                continue
             }
+
+            newText = newText.replace(cloze.raw, cloze.text); // Just show
         }
         return newText;
     }
@@ -63,12 +70,11 @@ export class ClozeClassicNote implements ClozeNote {
 
         let newText = this.text;
         for (const cloze of this.clozes) {
-            let oldText = `${clozeBegin}${cloze.text}${clozeEnd}${clozeSeqBegin}${cloze.seq}${clozeSeqEnd}`;
 
             if (cloze.seq === card) {
-                newText = newText.replace(oldText, `**${cloze.text}**`); // Show as answer
+                newText = newText.replace(cloze.raw, `**${cloze.text}**`); // Show as answer
             } else {
-                newText = newText.replace(oldText, cloze.text); // Just show
+                newText = newText.replace(cloze.raw, cloze.text); // Just show
             }
         }
         return newText;
