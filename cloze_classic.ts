@@ -1,4 +1,4 @@
-import { Cloze, ClozeNote, ClozeDelimiters } from "./cloze";
+import { Cloze, ClozeNote, ClozeNoteDefault, ClozeDelimiters } from "./cloze";
 
 
 export class ClozeClassic implements Cloze {
@@ -8,27 +8,24 @@ export class ClozeClassic implements Cloze {
     hint: string;
 }
 
-export class ClozeClassicNote implements ClozeNote {
-    text: string;
-    clozes: ClozeClassic[];
-    numCards: number;
-
+export class ClozeClassicNote extends ClozeNoteDefault implements ClozeNote  {
+    protected _clozes: ClozeClassic[];
 
     constructor(text: string, delimiters: ClozeDelimiters[]) {
-        this.text = text;
-        this.clozes = [];
-        this.numCards = 0;
+        super(text);
 
         this.initParsing(text, delimiters);
     }
 
     protected initParsing(text: string, delimiters: ClozeDelimiters[]): void {
 
-        let match: RegExpExecArray | null;
+        let clozes: ClozeClassic[] = [];
+        let numCards = 0
 
-        for (const cd of delimiters) {
+        ClozeClassicNote.parse(text, delimiters, function(regex:RegExp) {
 
-            const regex = new RegExp(`(${cd.beginEsc}([^${cd.endEsc}]+)${cd.endEsc}${cd.seqBeginEsc}(\\d+)${cd.seqEndEsc}(?:${cd.hintBeginEsc}([^${cd.hintEndEsc}]+)${cd.hintEndEsc})?)`, "g");
+            let match: RegExpExecArray | null;
+
             while (match = regex.exec(text)) {
 
                 let newCloze: ClozeClassic = {
@@ -38,23 +35,37 @@ export class ClozeClassicNote implements ClozeNote {
                     hint: match[4]
                 }
 
-                this.clozes.push(newCloze);
+                clozes.push(newCloze);
 
                 // Get the max seq
-                if (this.numCards < newCloze.seq) {
-                    this.numCards = newCloze.seq;
+                if (numCards < newCloze.seq) {
+                    numCards = newCloze.seq;
                 }
+            }
+        } )
+
+        this._clozes = clozes;
+        this._numCards = numCards;
+    }
+
+    // Override
+    protected static parse(text: string, delimiters: ClozeDelimiters[], fun: Function) {
+        for (const cd of delimiters) {
+            const regex = new RegExp(`(${cd.beginEsc}([^${cd.endEsc}]+)${cd.endEsc}${cd.seqBeginEsc}(\\d+)${cd.seqEndEsc}(?:${cd.hintBeginEsc}([^${cd.hintEndEsc}]+)${cd.hintEndEsc})?)`, "g");
+    
+            if ( fun(regex) === false ) {
+                break;
             }
         }
     }
 
     getFront(card: number): string {
-        if (card > this.numCards || card < 1) {
+        if (card > this._numCards || card < 1) {
             throw new Error(`Card ${card} does not exist`);
         }
 
         let frontText = this.text;
-        for (const cloze of this.clozes) {
+        for (const cloze of this._clozes) {
 
             if (cloze.seq !== card) {
                 frontText = frontText.replace(cloze.raw, cloze.text); // Just show
@@ -72,12 +83,12 @@ export class ClozeClassicNote implements ClozeNote {
     }
 
     getBack(card: number): string {
-        if (card > this.numCards || card < 1) {
+        if (card > this._numCards || card < 1) {
             throw new Error(`Card ${card} does not exist`);
         }
 
         let backText = this.text;
-        for (const cloze of this.clozes) {
+        for (const cloze of this._clozes) {
 
             if (cloze.seq === card) {
                 backText = backText.replace(cloze.raw, `**${cloze.text}**`); // Show as answer

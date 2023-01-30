@@ -1,4 +1,4 @@
-import { Cloze, ClozeNote, ClozeDelimiters } from "./cloze";
+import { Cloze, ClozeNote, ClozeNoteDefault, ClozeDelimiters } from "./cloze";
 
 
 class ClozeOL implements Cloze {
@@ -8,27 +8,24 @@ class ClozeOL implements Cloze {
     hint: string;
 }
 
-export class ClozeOLNote implements ClozeNote {
-    text: string;
-    clozes: ClozeOL[];
-    numCards: number;
-
+export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
+    protected _clozes: ClozeOL[];
 
     constructor(text: string, delimiters: ClozeDelimiters[]) {
-        this.text = text;
-        this.clozes = [];
-        this.numCards = 0;
+        super(text)
 
         this.initParsing(text, delimiters);
     }
 
     protected initParsing(text: string, delimiters: ClozeDelimiters[]) {
-        
-        let match: RegExpExecArray | null;
 
-        for (const cd of delimiters) {
+        let clozes: ClozeOL[] = [];
+        let numCards = 0
 
-            const regex = new RegExp(`(${cd.beginEsc}([^${cd.endEsc}]+)${cd.endEsc}${cd.seqBeginEsc}([ash]+)${cd.seqEndEsc}(?:${cd.hintBeginEsc}([^${cd.hintEndEsc}]+)${cd.hintEndEsc})?)`, "g");
+        ClozeOLNote.parse(text, delimiters, function(regex:RegExp) {
+
+            let match: RegExpExecArray | null;
+
             while (match = regex.exec(text)) {
 
                 let newCloze: ClozeOL = {
@@ -38,25 +35,38 @@ export class ClozeOLNote implements ClozeNote {
                     hint: match[4]
                 }
 
-                this.clozes.push(newCloze);
+                clozes.push(newCloze);
 
                 // Get the max seq length
-                if (this.numCards < newCloze.seq.length) {
-                    this.numCards = newCloze.seq.length;
+                if (numCards < newCloze.seq.length) {
+                    numCards = newCloze.seq.length;
                 }
+            }
+        } )
+
+        this._clozes = clozes;
+        this._numCards = numCards;
+    }
+
+    protected static parse(text: string, delimiters: ClozeDelimiters[], fun: Function) {
+        for (const cd of delimiters) {
+            const regex = new RegExp(`(${cd.beginEsc}([^${cd.endEsc}]+)${cd.endEsc}${cd.seqBeginEsc}([ash]+)${cd.seqEndEsc}(?:${cd.hintBeginEsc}([^${cd.hintEndEsc}]+)${cd.hintEndEsc})?)`, "g");
+    
+            if ( fun(regex) === false ) {
+                break;
             }
         }
     }
 
     getFront(card: number): string {
-        if (card > this.numCards || card < 1) {
+        if (card > this._numCards || card < 1) {
             throw new Error(`Card ${card} does not exist`);
         }
 
         card = card - 1; // card 1 is the first card, but the array starts at 0
 
         let frontText = this.text;
-        for (const cloze of this.clozes) {
+        for (const cloze of this._clozes) {
 
             // If the cloze has a sequence that does not specify the action on a certain card 
             // (a shorter sequence length than on other clozes), the default action will be just show
@@ -87,14 +97,14 @@ export class ClozeOLNote implements ClozeNote {
     }
 
     getBack(card: number): string {
-        if (card > this.numCards || card < 1) {
+        if (card > this._numCards || card < 1) {
             throw new Error(`Card ${card} does not exist`);
         }
 
         card = card - 1; // card 1 is the first card, but the array starts at 0
 
         let backText = this.text;
-        for (const cloze of this.clozes) {
+        for (const cloze of this._clozes) {
 
             // If the cloze has a sequence that does not specify the action on a certain card 
             // (a shorter sequence length than on other clozes), the default action will be just show

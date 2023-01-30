@@ -132,9 +132,57 @@ export interface Cloze {
 }
 
 export interface ClozeNote {
-    text: string;
-    clozes: Cloze[];
-    numCards: number;
+    get text(): string;
+    get clozes(): Cloze[];
+    get numCards(): number;
     getFront(card: number): string;
     getBack(card: number): string;
+}
+
+export class ClozeNoteDefault {
+    protected _text: string;
+    protected _clozes: Cloze[];
+    protected _numCards: number;
+
+    constructor(text: string) {
+        this._text = text;
+        this._clozes = [];
+        this._numCards = 0;
+    }
+
+    get text(): string {
+        return this._text;
+    }
+
+    get clozes(): Cloze[] {
+        return this._clozes;
+    }
+
+    get numCards(): number {
+        return this._numCards;
+    }
+
+    static isNote(text: string, delimiters: ClozeDelimiters[]):boolean {
+        let ans = false;
+
+        this.parse(text, delimiters, function(regex: RegExp) {
+            if ( regex.test(text) ){
+                ans = true;
+                return false; // stop parsing
+            }
+        } )
+
+        return ans;
+    }
+
+    // Must be overridden to replace the regex
+    protected static parse(text: string, delimiters: ClozeDelimiters[], fun: Function) {
+        for (const cd of delimiters) {
+            const regex = new RegExp(`(${cd.beginEsc}([^${cd.endEsc}]+)${cd.endEsc}${cd.seqBeginEsc}(\\d+)${cd.seqEndEsc}(?:${cd.hintBeginEsc}([^${cd.hintEndEsc}]+)${cd.hintEndEsc})?)`, "g");
+    
+            if ( fun(regex) === false ) {
+                break;
+            }
+        }
+    }
 }
