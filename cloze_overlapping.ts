@@ -1,4 +1,5 @@
 import { Cloze, ClozeNote, ClozeNoteDefault, ClozeDelimiters } from "./cloze";
+import { format } from "./utils";
 
 
 class ClozeOL implements Cloze {
@@ -72,18 +73,18 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
             // (a shorter sequence length than on other clozes), the default action will be just show
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
-            if ( card >= cloze.seq.length ) {
-                frontText = frontText.replace(cloze.raw, cloze.text); // Just show
-                continue;
+            let clozeAction = "s";
+            if ( card < cloze.seq.length ) {
+                clozeAction = cloze.seq[card];
             }
 
-            switch (cloze.seq[card]) {
+            switch (clozeAction) {
                 case "a":
                     if (cloze.hint !== undefined) {
-                        frontText = frontText.replace(cloze.raw, `**[${cloze.hint}]**`); // Hide asked cloze with hint
+                        frontText = frontText.replace(cloze.raw, format.asking(`[${cloze.hint}]`)); // Hide asked cloze with hint
                         break;
                     }
-                    frontText = frontText.replace(cloze.raw, `**[...]**`); // Hide asked cloze
+                    frontText = frontText.replace(cloze.raw, format.asking(`[...]`)); // Hide asked cloze
                     break;
                 case "h":
                     frontText = frontText.replace(cloze.raw, `...`); // Just hide
@@ -110,14 +111,14 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
             // (a shorter sequence length than on other clozes), the default action will be just show
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
-            if ( card >= cloze.seq.length ) {
-                backText = backText.replace(cloze.raw, cloze.text); // Just show
-                continue;
+            let clozeAction = "s";
+            if ( card < cloze.seq.length ) {
+                clozeAction = cloze.seq[card];
             }
 
-            switch (cloze.seq[card]) {
+            switch (clozeAction) {
                 case "a":
-                    backText = backText.replace(cloze.raw, `**${cloze.text}**`); // Show as answer
+                    backText = backText.replace(cloze.raw, format.showing(cloze.text)); // Show as answer
                     break;
                 case "h":
                     backText = backText.replace(cloze.raw, `...`); // Just hide

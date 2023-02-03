@@ -1,4 +1,5 @@
 import { Cloze, ClozeNote, ClozeNoteDefault, ClozeDelimiters } from "./cloze";
+import { format } from "./utils";
 
 
 export class ClozeClassic implements Cloze {
@@ -73,11 +74,11 @@ export class ClozeClassicNote extends ClozeNoteDefault implements ClozeNote  {
             }
 
             if (cloze.hint !== undefined) {
-                frontText = frontText.replace(cloze.raw, `**[${cloze.hint}]**`); // Hide asked cloze with hint
+                frontText = frontText.replace(cloze.raw, format.asking(`[${cloze.hint}]`) ); // Hide asked cloze with hint
                 continue
             }
 
-            frontText = frontText.replace(cloze.raw, `**[...]**`); // Hide asked cloze
+            frontText = frontText.replace(cloze.raw, format.asking(`[...]`)); // Hide asked cloze
         }
         return frontText;
     }
@@ -91,7 +92,7 @@ export class ClozeClassicNote extends ClozeNoteDefault implements ClozeNote  {
         for (const cloze of this._clozes) {
 
             if (cloze.seq === card) {
-                backText = backText.replace(cloze.raw, `**${cloze.text}**`); // Show as answer
+                backText = backText.replace(cloze.raw, format.showing(cloze.text)); // Show as answer
             } else {
                 backText = backText.replace(cloze.raw, cloze.text); // Just show
             }
