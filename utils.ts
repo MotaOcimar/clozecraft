@@ -1,4 +1,4 @@
-export function escapeRegExp(str: string) {
+export function escapeRegexString(str: string) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 

@@ -1,4 +1,4 @@
-import { escapeRegExp } from "./utils";
+import { escapeRegexString } from "./utils";
 
 export class ClozeDelimiters {
     private readonly _begin: string;
@@ -46,27 +46,27 @@ export class ClozeDelimiters {
     }
 
     get beginEsc(): string {
-        return escapeRegExp(this._begin);
+        return escapeRegexString(this._begin);
     }
 
     get endEsc(): string {
-        return escapeRegExp(this._end);
+        return escapeRegexString(this._end);
     }
 
     get seqBeginEsc(): string {
-        return escapeRegExp(this._seqBegin);
+        return escapeRegexString(this._seqBegin);
     }
 
     get seqEndEsc(): string {
-        return escapeRegExp(this._seqEnd);
+        return escapeRegexString(this._seqEnd);
     }
 
     get hintBeginEsc(): string {
-        return escapeRegExp(this._hintBegin);
+        return escapeRegexString(this._hintBegin);
     }
 
     get hintEndEsc(): string {
-        return escapeRegExp(this._hintEnd);
+        return escapeRegexString(this._hintEnd);
     }
 }
 
