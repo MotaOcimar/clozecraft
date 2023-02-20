@@ -1,4 +1,6 @@
-import { Cloze, ClozeNote, ClozeNoteDefault, ClozeDelimiters } from "./cloze";
+import { Cloze, ClozeNote, ClozeNoteDefault } from "./cloze";
+import { ClozeFormatting } from "./clozeFormatting/clozeFormatting";
+import { ClozeRegExpExecArray } from "./clozeFormatting/clozeRegExp";
 import { format } from "./utils";
 
 
@@ -12,28 +14,28 @@ class ClozeOL implements Cloze {
 export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
     protected _clozes: ClozeOL[];
 
-    constructor(text: string, delimiters: ClozeDelimiters[]) {
+    constructor(text: string, formattings: ClozeFormatting[]) {
         super(text)
-
-        this.initParsing(text, delimiters);
+        this.initParsing(text, formattings);
     }
 
-    protected initParsing(text: string, delimiters: ClozeDelimiters[]) {
+    protected initParsing(text: string, formattings: ClozeFormatting[]) {
 
         let clozes: ClozeOL[] = [];
         let numCards = 0
 
-        ClozeOLNote.parse(text, delimiters, function(regex:RegExp) {
+        formattings.forEach( (formatting) => {
+            const regex = formatting.clozeOLRegex;
 
-            let match: RegExpExecArray | null;
+            let match: ClozeRegExpExecArray | null;
 
             while (match = regex.exec(text)) {
 
                 let newCloze: ClozeOL = {
-                    raw: match[1],
-                    text: match[2],
-                    seq: match[3],
-                    hint: match[4]
+                    raw: match[0],
+                    text: match.clozeText,
+                    seq: match.clozeSeq,
+                    hint: match.clozeText
                 }
 
                 clozes.push(newCloze);
@@ -49,14 +51,14 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
         this._numCards = numCards;
     }
 
-    protected static parse(text: string, delimiters: ClozeDelimiters[], fun: Function) {
-        for (const cd of delimiters) {
-            const regex = new RegExp(`(${cd.beginEsc}([^${cd.endEsc}]+)${cd.endEsc}${cd.seqBeginEsc}([ash]+)${cd.seqEndEsc}(?:${cd.hintBeginEsc}([^${cd.hintEndEsc}]+)${cd.hintEndEsc})?)`, "g");
-    
-            if ( fun(regex) === false ) {
-                break;
+    static isNote(text: string, formattings: ClozeFormatting[]): boolean {
+        for (const formatting of formattings) {
+            const regex = formatting.clozeOLRegex;
+            if ( regex.test(text) ){
+                return true;
             }
         }
+        return false;
     }
 
     getFront(card: number): string {

@@ -12,7 +12,7 @@ export enum clozeElement {
     seq = "seq"
 }
 
-export interface clozeFormatting {
+export interface ClozeFormatting {
     get clozeSimpleRegex(): ClozeRegExp;
     get clozeClassicRegex(): ClozeRegExp;
     get clozeOLRegex(): ClozeRegExp;
@@ -22,7 +22,7 @@ export interface clozeFormatting {
     hasClozeOL(text: string): boolean;
 }
 
-export class clozeFormattingImpl implements clozeFormatting {
+export class ClozeFormattingImpl implements ClozeFormatting {
     private readonly _raw: string;
     
     private readonly numFormatting: RegExpExecArray;
@@ -56,9 +56,9 @@ export class clozeFormattingImpl implements clozeFormatting {
 
         this.numFormatting = _numMatch;
         this.hintFormatting = _hintMatch;
-        this.numRegex = clozeFormattingImpl.processFormatting(_numMatch[0], (text: string) => text.replace(/\d+/g, "(\\d+)"));
-        this.seqRegex = clozeFormattingImpl.processFormatting(_numMatch[0], (text: string) => text.replace(/\d+/g, "([ash]+)"));
-        this.hintRegex = clozeFormattingImpl.processFormatting(_hintMatch[0], (text: string) => text.replace(/hint/g, "(.+?)"));
+        this.numRegex = ClozeFormattingImpl.processFormatting(_numMatch[0], (text: string) => text.replace(/\d+/g, "(\\d+)"));
+        this.seqRegex = ClozeFormattingImpl.processFormatting(_numMatch[0], (text: string) => text.replace(/\d+/g, "([ash]+)"));
+        this.hintRegex = ClozeFormattingImpl.processFormatting(_hintMatch[0], (text: string) => text.replace(/hint/g, "(.+?)"));
 
         this.hintRegex = "(?:" + this.hintRegex + ")?"; // Cloze hint is always optional
 

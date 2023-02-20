@@ -1,4 +1,5 @@
-import { ClozeDelimiters } from "./cloze";
+import { ClozeFormatting } from "./clozeFormatting/clozeFormatting";
+import { ClozeRegExpExecArray } from "./clozeFormatting/clozeRegExp";
 import { ClozeClassicNote, ClozeClassic} from "./cloze_classic";
 
 class ClozeSimple extends ClozeClassic {}
@@ -7,24 +8,25 @@ export class ClozeSimpleNote extends ClozeClassicNote {
     protected _clozes: ClozeSimple[];
 
     // Override
-    protected initParsing(text: string, delimiters: ClozeDelimiters[]) {
+    protected initParsing(text: string, formattings: ClozeFormatting[]) {
 
         let clozes: ClozeSimple[] = [];
         let numCards = 0
 
-        ClozeSimpleNote.parse(text, delimiters, function(regex:RegExp) {
+        formattings.forEach( (formatting) => {
+            const regex = formatting.clozeSimpleRegex;
 
-            let match: RegExpExecArray | null;
+            let match: ClozeRegExpExecArray | null;
 
             while (match = regex.exec(text)) {
 
                 numCards++;
 
                 let newCloze: ClozeSimple = {
-                    raw: match[1],
-                    text: match[2],
+                    raw: match[0],
+                    text: match.clozeText,
                     seq: numCards,
-                    hint: match[3]
+                    hint: match.clozeHint
                 }
 
                 clozes.push(newCloze);
@@ -35,14 +37,13 @@ export class ClozeSimpleNote extends ClozeClassicNote {
         this._numCards = numCards;
     }
 
-    // Override
-    protected static parse(text: string, delimiters: ClozeDelimiters[], fun: Function) {
-        for (const cd of delimiters) {
-            const regex = new RegExp(`(${cd.beginEsc}([^${cd.endEsc}]+)${cd.endEsc}(?:${cd.hintBeginEsc}([^${cd.hintEndEsc}]+)${cd.hintEndEsc})?)`, "g");
-    
-            if ( fun(regex) === false ) {
-                break;
+    static isNote(text: string, formattings: ClozeFormatting[]): boolean {
+        for (const formatting of formattings) {
+            const regex = formatting.clozeSimpleRegex;
+            if ( regex.test(text) ){
+                return true;
             }
         }
+        return false;
     }
 }
