@@ -1,5 +1,5 @@
 import { Cloze, ClozeNote, ClozeNoteDefault } from "./cloze";
-import { ClozeFormatting, ClozeFormattingImpl } from "./clozeFormatting/clozeFormatting";
+import { ClozeFormatting } from "./clozeFormatting/clozeFormatting";
 import { ClozeRegExpExecArray } from "./clozeFormatting/clozeRegExp";
 import { format } from "./utils";
 
