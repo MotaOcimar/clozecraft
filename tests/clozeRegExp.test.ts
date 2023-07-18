@@ -1,0 +1,1 @@
+import { clozeRegExp } from '../src/clozeRegExp';
