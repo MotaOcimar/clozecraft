@@ -1,1 +1,1 @@
-import { clozeRegExp } from '../src/clozeRegExp';
+// import { clozeRegExp } from '../src/clozeRegExp';
