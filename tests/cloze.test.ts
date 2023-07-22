@@ -24,8 +24,8 @@ console.log(ClozeSimpleNote.isNote(text, formattings))
 
 let clozeNote: ClozeNote = new ClozeOLNote(text, formattings);
 
-console.log(clozeNote.clozes);
-console.log(clozeNote.text);
+console.log(clozeNote.clozeDeletions);
+console.log(clozeNote.raw);
 
 let card = 3;
 
@@ -65,8 +65,8 @@ console.log(ClozeClassicNote.isNote(text, formattings))
 console.log(ClozeSimpleNote.isNote(text, formattings))
 clozeNote = new ClozeClassicNote(text, formattings);
 
-console.log(clozeNote.clozes);
-console.log(clozeNote.text);
+console.log(clozeNote.clozeDeletions);
+console.log(clozeNote.raw);
 
 card = 1;
 
@@ -83,8 +83,8 @@ console.log(ClozeClassicNote.isNote(text, formattings))
 console.log(ClozeSimpleNote.isNote(text, formattings))
 clozeNote = new ClozeSimpleNote(text, formattings);
 
-console.log(clozeNote.clozes);
-console.log(clozeNote.text);
+console.log(clozeNote.clozeDeletions);
+console.log(clozeNote.raw);
 
 card = 1;
 

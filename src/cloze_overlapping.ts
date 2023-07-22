@@ -1,18 +1,18 @@
-import { Cloze, ClozeNote, ClozeNoteDefault } from "./cloze";
+import { ClozeDeletion, ClozeNote, ClozeNoteDefault } from "./cloze";
 import { ClozeFormatting } from "./clozeFormatting";
 import { ClozeRegExpExecArray } from "./clozeRegExp";
 import { format } from "./utils";
 
 
-class ClozeOL implements Cloze {
+class ClozeOL implements ClozeDeletion {
     raw: string;
-    text: string;
+    answer: string;
     seq: string;
     hint: string;
 }
 
 export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
-    protected _clozes: ClozeOL[];
+    protected _clozeDeletions: ClozeOL[];
 
     constructor(text: string, formattings: ClozeFormatting[]) {
         super(text)
@@ -33,7 +33,7 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
 
                 let newCloze: ClozeOL = {
                     raw: match[0],
-                    text: match.clozeText,
+                    answer: match.clozeText,
                     seq: match.clozeSeq,
                     hint: match.clozeText
                 }
@@ -47,7 +47,7 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
             }
         } )
 
-        this._clozes = clozes;
+        this._clozeDeletions = clozes;
         this._numCards = numCards;
     }
 
@@ -68,8 +68,8 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
 
         card = card - 1; // card 1 is the first card, but the array starts at 0
 
-        let frontText = this.text;
-        for (const cloze of this._clozes) {
+        let frontText = this.raw;
+        for (const cloze of this._clozeDeletions) {
 
             // If the cloze has a sequence that does not specify the action on a certain card 
             // (a shorter sequence length than on other clozes), the default action will be just show
@@ -92,7 +92,7 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
                     frontText = frontText.replace(cloze.raw, `...`); // Just hide
                     break;
                 case "s":
-                    frontText = frontText.replace(cloze.raw, cloze.text); // Just show
+                    frontText = frontText.replace(cloze.raw, cloze.answer); // Just show
                     break;
             }
         }
@@ -106,8 +106,8 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
 
         card = card - 1; // card 1 is the first card, but the array starts at 0
 
-        let backText = this.text;
-        for (const cloze of this._clozes) {
+        let backText = this.raw;
+        for (const cloze of this._clozeDeletions) {
 
             // If the cloze has a sequence that does not specify the action on a certain card 
             // (a shorter sequence length than on other clozes), the default action will be just show
@@ -120,13 +120,13 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
 
             switch (clozeAction) {
                 case "a":
-                    backText = backText.replace(cloze.raw, format.showing(cloze.text)); // Show as answer
+                    backText = backText.replace(cloze.raw, format.showing(cloze.answer)); // Show as answer
                     break;
                 case "h":
                     backText = backText.replace(cloze.raw, `...`); // Just hide
                     break;
                 case "s":
-                    backText = backText.replace(cloze.raw, cloze.text); // Just show
+                    backText = backText.replace(cloze.raw, cloze.answer); // Just show
                     break;
             }
         }

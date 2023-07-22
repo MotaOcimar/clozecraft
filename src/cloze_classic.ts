@@ -1,18 +1,18 @@
-import { Cloze, ClozeNote, ClozeNoteDefault } from "./cloze";
+import { ClozeDeletion, ClozeNote, ClozeNoteDefault } from "./cloze";
 import { ClozeFormatting } from "./clozeFormatting";
 import { ClozeRegExpExecArray } from "./clozeRegExp";
 import { format } from "./utils";
 
 
-export class ClozeClassic implements Cloze {
+export class ClozeClassic implements ClozeDeletion {
     raw: string;
-    text: string;
+    answer: string;
     seq: number;
     hint: string;
 }
 
 export class ClozeClassicNote extends ClozeNoteDefault implements ClozeNote  {
-    protected _clozes: ClozeClassic[];
+    protected _clozeDeletions: ClozeClassic[];
 
     constructor(text: string, formattings: ClozeFormatting[]) {
         super(text);
@@ -33,7 +33,7 @@ export class ClozeClassicNote extends ClozeNoteDefault implements ClozeNote  {
 
                 let newCloze: ClozeClassic = {
                     raw: match[0],
-                    text: match.clozeText,
+                    answer: match.clozeText,
                     seq: parseInt(match.clozeSeq),
                     hint: match.clozeHint
                 }
@@ -47,7 +47,7 @@ export class ClozeClassicNote extends ClozeNoteDefault implements ClozeNote  {
             }
         } )
 
-        this._clozes = clozes;
+        this._clozeDeletions = clozes;
         this._numCards = numCards;
     }
 
@@ -66,11 +66,11 @@ export class ClozeClassicNote extends ClozeNoteDefault implements ClozeNote  {
             throw new Error(`Card ${card} does not exist`);
         }
 
-        let frontText = this.text;
-        for (const cloze of this._clozes) {
+        let frontText = this.raw;
+        for (const cloze of this._clozeDeletions) {
 
             if (cloze.seq !== card) {
-                frontText = frontText.replace(cloze.raw, cloze.text); // Just show
+                frontText = frontText.replace(cloze.raw, cloze.answer); // Just show
                 continue;
             }
 
@@ -89,13 +89,13 @@ export class ClozeClassicNote extends ClozeNoteDefault implements ClozeNote  {
             throw new Error(`Card ${card} does not exist`);
         }
 
-        let backText = this.text;
-        for (const cloze of this._clozes) {
+        let backText = this.raw;
+        for (const cloze of this._clozeDeletions) {
 
             if (cloze.seq === card) {
-                backText = backText.replace(cloze.raw, format.showing(cloze.text)); // Show as answer
+                backText = backText.replace(cloze.raw, format.showing(cloze.answer)); // Show as answer
             } else {
-                backText = backText.replace(cloze.raw, cloze.text); // Just show
+                backText = backText.replace(cloze.raw, cloze.answer); // Just show
             }
         }
         return backText;

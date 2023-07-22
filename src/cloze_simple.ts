@@ -5,7 +5,7 @@ import { ClozeClassicNote, ClozeClassic} from "./cloze_classic";
 class ClozeSimple extends ClozeClassic {}
 
 export class ClozeSimpleNote extends ClozeClassicNote {
-    protected _clozes: ClozeSimple[];
+    protected _clozeDeletions: ClozeSimple[];
 
     // Override
     protected initParsing(text: string, formattings: ClozeFormatting[]) {
@@ -24,7 +24,7 @@ export class ClozeSimpleNote extends ClozeClassicNote {
 
                 let newCloze: ClozeSimple = {
                     raw: match[0],
-                    text: match.clozeText,
+                    answer: match.clozeText,
                     seq: numCards,
                     hint: match.clozeHint
                 }
@@ -33,7 +33,7 @@ export class ClozeSimpleNote extends ClozeClassicNote {
             }
         } )
 
-        this._clozes = clozes;
+        this._clozeDeletions = clozes;
         this._numCards = numCards;
     }
 
