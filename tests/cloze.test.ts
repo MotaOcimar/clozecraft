@@ -1,6 +1,6 @@
-import { ClozeOLNote } from "../src/impl/cloze-overlapping";
-import { ClozeClassicNote } from "../src/impl/cloze-classic";
-import { ClozeSimpleNote } from "../src/impl/cloze-simple";
+import { ClozeNoteOL } from "../src/impl/cloze-note-overlapping";
+import { ClozeNoteClassic } from "../src/impl/cloze-note-classic";
+import { ClozeNoteSimple } from "../src/impl/cloze-note-simple";
 import { ClozeFormattingImpl } from "../src/impl/cloze-formatting";
 import { ClozeNote } from "../src/interfaces/cloze-note";
 
@@ -18,11 +18,11 @@ let formattings = [formatting1, formatting2];
 // Cloze Overlapping example usage
 let text = "This is a ==cloze1==%%ash%%^[hint1] ==cloze2==%%ha%% {csha::cloze3::hint3}";
 
-console.log(ClozeOLNote.isNote(text, formattings))
-console.log(ClozeClassicNote.isNote(text, formattings))
-console.log(ClozeSimpleNote.isNote(text, formattings))
+console.log(ClozeNoteOL.isNote(text, formattings))
+console.log(ClozeNoteClassic.isNote(text, formattings))
+console.log(ClozeNoteSimple.isNote(text, formattings))
 
-let clozeNote: ClozeNote = new ClozeOLNote(text, formattings);
+let clozeNote: ClozeNote = new ClozeNoteOL(text, formattings);
 
 console.log(clozeNote.clozeDeletions);
 console.log(clozeNote.raw);
@@ -60,10 +60,10 @@ console.log(back);
 
 // Cloze Classic example usage
 text = "This is a ==cloze1==%%1%%^[hint1] ==cloze2==%%2%% {c3::cloze3::hint3}";
-console.log(ClozeOLNote.isNote(text, formattings))
-console.log(ClozeClassicNote.isNote(text, formattings))
-console.log(ClozeSimpleNote.isNote(text, formattings))
-clozeNote = new ClozeClassicNote(text, formattings);
+console.log(ClozeNoteOL.isNote(text, formattings))
+console.log(ClozeNoteClassic.isNote(text, formattings))
+console.log(ClozeNoteSimple.isNote(text, formattings))
+clozeNote = new ClozeNoteClassic(text, formattings);
 
 console.log(clozeNote.clozeDeletions);
 console.log(clozeNote.raw);
@@ -78,10 +78,10 @@ console.log(back);
 
 // Cloze Simple example usage
 text = "This is a ==cloze1==^[hint1] {cloze2::hint2} ==cloze3==";
-console.log(ClozeOLNote.isNote(text, formattings))
-console.log(ClozeClassicNote.isNote(text, formattings))
-console.log(ClozeSimpleNote.isNote(text, formattings))
-clozeNote = new ClozeSimpleNote(text, formattings);
+console.log(ClozeNoteOL.isNote(text, formattings))
+console.log(ClozeNoteClassic.isNote(text, formattings))
+console.log(ClozeNoteSimple.isNote(text, formattings))
+clozeNote = new ClozeNoteSimple(text, formattings);
 
 console.log(clozeNote.clozeDeletions);
 console.log(clozeNote.raw);

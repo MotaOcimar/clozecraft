@@ -1,4 +1,4 @@
-import { ClozeDeletion } from "../interfaces/cloze-deletion";
+import { ClozeDeletionOL } from "./cloze-deletion-overlapping";
 import { ClozeNote } from "../interfaces/cloze-note";
 import { ClozeNoteDefault } from "./cloze-note-default";
 import { ClozeFormatting } from "./cloze-formatting";
@@ -6,15 +6,8 @@ import { ClozeRegExpExecArray } from "./cloze-reg-exp";
 import { format } from "./utils";
 
 
-class ClozeOL implements ClozeDeletion {
-    raw: string;
-    answer: string;
-    seq: string;
-    hint: string;
-}
-
-export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
-    protected _clozeDeletions: ClozeOL[];
+export class ClozeNoteOL extends ClozeNoteDefault implements ClozeNote {
+    protected _clozeDeletions: ClozeDeletionOL[];
 
     constructor(text: string, formattings: ClozeFormatting[]) {
         super(text)
@@ -23,7 +16,7 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
 
     protected initParsing(text: string, formattings: ClozeFormatting[]) {
 
-        let clozes: ClozeOL[] = [];
+        let clozes: ClozeDeletionOL[] = [];
         let numCards = 0
 
         formattings.forEach( (formatting) => {
@@ -33,7 +26,7 @@ export class ClozeOLNote extends ClozeNoteDefault implements ClozeNote {
 
             while (match = regex.exec(text)) {
 
-                let newCloze: ClozeOL = {
+                let newCloze: ClozeDeletionOL = {
                     raw: match[0],
                     answer: match.clozeText,
                     seq: match.clozeSeq,

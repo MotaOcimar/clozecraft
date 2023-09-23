@@ -1,16 +1,15 @@
 import { ClozeFormatting } from "./cloze-formatting";
 import { ClozeRegExpExecArray } from "./cloze-reg-exp";
-import { ClozeClassicNote, ClozeClassic} from "./cloze-classic";
+import { ClozeDeletionSimple } from "./cloze-deletion-simple";
+import { ClozeNoteClassic } from "./cloze-note-classic";
 
-class ClozeSimple extends ClozeClassic {}
-
-export class ClozeSimpleNote extends ClozeClassicNote {
-    protected _clozeDeletions: ClozeSimple[];
+export class ClozeNoteSimple extends ClozeNoteClassic {
+    protected _clozeDeletions: ClozeDeletionSimple[];
 
     // Override
     protected initParsing(text: string, formattings: ClozeFormatting[]) {
 
-        let clozes: ClozeSimple[] = [];
+        let clozes: ClozeDeletionSimple[] = [];
         let numCards = 0
 
         formattings.forEach( (formatting) => {
@@ -22,7 +21,7 @@ export class ClozeSimpleNote extends ClozeClassicNote {
 
                 numCards++;
 
-                let newCloze: ClozeSimple = {
+                let newCloze: ClozeDeletionSimple = {
                     raw: match[0],
                     answer: match.clozeText,
                     seq: numCards,
