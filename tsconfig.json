@@ -4,5 +4,5 @@
     },
     "include": [
       "*.ts"
-, "tests/cloze.test.ts", "src/utils.ts"    ]
+, "tests/cloze.test.ts", "src/impl/utils.ts"    ]
 }

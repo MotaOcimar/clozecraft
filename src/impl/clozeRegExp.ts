@@ -1,4 +1,5 @@
 import { clozeElement } from "./clozeFormatting";
+import { ClozeRegExp } from "../interfaces/cloze-reg-exp"
 
 export interface ClozeRegExpExecArray extends RegExpExecArray {
     clozeText: string;
@@ -6,7 +7,7 @@ export interface ClozeRegExpExecArray extends RegExpExecArray {
     clozeSeq: string | null;
 }
 
-export class ClozeRegExp {
+export class ClozeRegExpImpl implements ClozeRegExp {
     readonly regex: RegExp;
     private readonly clozeOrder: clozeElement[];
 
