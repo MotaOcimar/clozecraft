@@ -1,6 +1,8 @@
-import { ClozeDeletion, ClozeNote, ClozeNoteDefault } from "../interfaces/cloze-deletion";
-import { ClozeFormatting } from "./clozeFormatting";
-import { ClozeRegExpExecArray } from "./clozeRegExp";
+import { ClozeDeletion } from "../interfaces/cloze-deletion";
+import { ClozeNote } from "../interfaces/cloze-note";
+import { ClozeNoteDefault } from "./cloze-note-default";
+import { ClozeFormatting } from "./cloze-formatting";
+import { ClozeRegExpExecArray } from "./cloze-reg-exp";
 import { format } from "./utils";
 
 

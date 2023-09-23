@@ -1,4 +1,4 @@
-import { clozeElement } from "./clozeFormatting";
+import { clozeElement } from "./cloze-formatting";
 import { ClozeRegExp } from "../interfaces/cloze-reg-exp"
 
 export interface ClozeRegExpExecArray extends RegExpExecArray {

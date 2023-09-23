@@ -1,5 +1,5 @@
 import { escapeRegexString } from "./utils";
-import { ClozeRegExp as ClozeRegExp } from "./clozeRegExp";
+import { ClozeRegExpImpl as ClozeRegExp } from "./cloze-reg-exp";
 
 const numFormattingRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?\\d+(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
 const hintFormattingRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?hint(?:(?:\\\\\\])?[^\\]]?)+?\\]`)

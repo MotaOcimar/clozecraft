@@ -1,5 +1,5 @@
-import { ClozeFormattingImpl } from "../src/clozeFormatting";
-import { ClozeRegExpExecArray } from "../src/clozeRegExp";
+import { ClozeFormattingImpl } from "../src/impl/cloze-formatting";
+import { ClozeRegExpExecArray } from "../src/impl/cloze-reg-exp";
 
 let text =
 "[cloze][%%\\[123\\]%%][^\\[hint\\]]\n\

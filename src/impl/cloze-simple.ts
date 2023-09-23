@@ -1,6 +1,6 @@
-import { ClozeFormatting } from "./clozeFormatting";
-import { ClozeRegExpExecArray } from "./clozeRegExp";
-import { ClozeClassicNote, ClozeClassic} from "./cloze_classic";
+import { ClozeFormatting } from "./cloze-formatting";
+import { ClozeRegExpExecArray } from "./cloze-reg-exp";
+import { ClozeClassicNote, ClozeClassic} from "./cloze-classic";
 
 class ClozeSimple extends ClozeClassic {}
 

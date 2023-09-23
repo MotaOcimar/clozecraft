@@ -1,8 +1,8 @@
-import { ClozeOLNote } from "../src/impl/cloze_overlapping";
-import { ClozeClassicNote } from "../src/impl/cloze_classic";
-import { ClozeSimpleNote } from "../src/impl/cloze_simple";
-import { ClozeFormattingImpl } from "../src/impl/clozeFormatting";
-import { ClozeNote } from "../src/interfaces/cloze-deletion";
+import { ClozeOLNote } from "../src/impl/cloze-overlapping";
+import { ClozeClassicNote } from "../src/impl/cloze-classic";
+import { ClozeSimpleNote } from "../src/impl/cloze-simple";
+import { ClozeFormattingImpl } from "../src/impl/cloze-formatting";
+import { ClozeNote } from "../src/interfaces/cloze-note";
 
 
 // Example of cloze classic:     "==cloze1==%%1%%^[hint]"
