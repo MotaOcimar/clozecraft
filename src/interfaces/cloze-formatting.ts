@@ -1,11 +1,5 @@
 import { ClozeRegExp } from "./cloze-reg-exp";
 
-export enum clozeElement {
-    text = "text",
-    hint = "hint",
-    seq = "seq"
-}
-
 export interface ClozeFormatting {
     get clozeSimpleRegex(): ClozeRegExp;
     get clozeClassicRegex(): ClozeRegExp;

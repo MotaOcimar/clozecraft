@@ -1,17 +1,12 @@
-import { clozeElement } from "./cloze-formatting";
+import { ClozeFieldEnum } from "./cloze-field-enum";
 import { ClozeRegExp } from "../interfaces/cloze-reg-exp"
-
-export interface ClozeRegExpExecArray extends RegExpExecArray {
-    clozeText: string;
-    clozeHint: string;
-    clozeSeq: string | null;
-}
+import { ClozeRegExpExecArray } from "../interfaces/cloze-reg-exp-exec-array";
 
 export class ClozeRegExpImpl implements ClozeRegExp {
     readonly regex: RegExp;
-    private readonly clozeOrder: clozeElement[];
+    private readonly clozeOrder: ClozeFieldEnum[];
 
-    constructor(pattern: string, clozeOrder: clozeElement[], flags?: string) {
+    constructor(pattern: string, clozeOrder: ClozeFieldEnum[], flags?: string) {
         this.regex = new RegExp(pattern, flags);
         this.clozeOrder = clozeOrder;
     }
@@ -25,22 +20,22 @@ export class ClozeRegExpImpl implements ClozeRegExp {
         }
 
         // All clozes (Cloze simple, Cloze Classic and Cloze overlapping) have the cloze text and can have cloze hint
-        if (this.clozeOrder.indexOf(clozeElement.text) == -1) {
+        if (this.clozeOrder.indexOf(ClozeFieldEnum.text) == -1) {
             throw new Error("Cloze text not found in clozeOrder");
         }
-        if (this.clozeOrder.indexOf(clozeElement.hint) == -1) {
+        if (this.clozeOrder.indexOf(ClozeFieldEnum.hint) == -1) {
             throw new Error("Cloze hint not found in clozeOrder");
         }
 
         // But cloze simple doesn't have cloze seq
-        if (this.clozeOrder.indexOf(clozeElement.seq) == -1) {
+        if (this.clozeOrder.indexOf(ClozeFieldEnum.seq) == -1) {
             ans.clozeSeq = null;
         } else {
-            ans.clozeSeq = ans[this.clozeOrder.indexOf(clozeElement.seq) + 1];
+            ans.clozeSeq = ans[this.clozeOrder.indexOf(ClozeFieldEnum.seq) + 1];
         }
 
-        ans.clozeText = ans[this.clozeOrder.indexOf(clozeElement.text) + 1];
-        ans.clozeHint = ans[this.clozeOrder.indexOf(clozeElement.hint) + 1];
+        ans.clozeText = ans[this.clozeOrder.indexOf(ClozeFieldEnum.text) + 1];
+        ans.clozeHint = ans[this.clozeOrder.indexOf(ClozeFieldEnum.hint) + 1];
 
         return ans;
     }

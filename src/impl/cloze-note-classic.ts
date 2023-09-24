@@ -1,20 +1,20 @@
 import { ClozeDeletionClassic } from "./cloze-deletion-classic";
 import { ClozeNote } from "../interfaces/cloze-note";
 import { ClozeNoteDefault } from "./cloze-note-default";
-import { ClozeFormatting } from "./cloze-formatting";
-import { ClozeRegExpExecArray } from "./cloze-reg-exp";
+import { ClozeFormattingImpl } from "./cloze-formatting";
+import { ClozeRegExpExecArray } from "../interfaces/cloze-reg-exp-exec-array";
 import { format } from "./utils";
 
 
 export class ClozeNoteClassic extends ClozeNoteDefault implements ClozeNote  {
     protected _clozeDeletions: ClozeDeletionClassic[];
 
-    constructor(text: string, formattings: ClozeFormatting[]) {
+    constructor(text: string, formattings: ClozeFormattingImpl[]) {
         super(text);
         this.initParsing(text, formattings);
     }
 
-    protected initParsing(text: string, formattings: ClozeFormatting[]): void {
+    protected initParsing(text: string, formattings: ClozeFormattingImpl[]): void {
 
         let clozes: ClozeDeletionClassic[] = [];
         let numCards = 0
@@ -46,7 +46,7 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements ClozeNote  {
         this._numCards = numCards;
     }
 
-    static isNote(text: string, formattings: ClozeFormatting[]): boolean {
+    static isNote(text: string, formattings: ClozeFormattingImpl[]): boolean {
         for (const formatting of formattings) {
             const regex = formatting.clozeClassicRegex;
             if ( regex.test(text) ){

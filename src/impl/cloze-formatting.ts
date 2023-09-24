@@ -1,26 +1,11 @@
 import { escapeRegexString } from "./utils";
-import { ClozeRegExpImpl as ClozeRegExp } from "./cloze-reg-exp";
+import { ClozeRegExpImpl } from "./cloze-reg-exp";
+import { ClozeFormatting } from "../interfaces/cloze-formatting";
+import { ClozeFieldEnum } from "./cloze-field-enum";
 
 const numFormattingRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?\\d+(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
 const hintFormattingRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?hint(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
 const clozeKeyword = `cloze` // Must not have regex special characters
-
-
-export enum clozeElement {
-    text = "text",
-    hint = "hint",
-    seq = "seq"
-}
-
-export interface ClozeFormatting {
-    get clozeSimpleRegex(): ClozeRegExp;
-    get clozeClassicRegex(): ClozeRegExp;
-    get clozeOLRegex(): ClozeRegExp;
-
-    hasClozeSimple(text: string): boolean;
-    hasClozeClassic(text: string): boolean;
-    hasClozeOL(text: string): boolean;
-}
 
 export class ClozeFormattingImpl implements ClozeFormatting {
     private readonly _raw: string;
@@ -32,11 +17,11 @@ export class ClozeFormattingImpl implements ClozeFormatting {
     private readonly numRegex: string;
     private readonly seqRegex: string;
 
-    private readonly clozeOrder: clozeElement[];
+    private readonly clozeOrder: ClozeFieldEnum[];
 
-    private _clozeSimpleRegex: ClozeRegExp;
-    private _clozeClassicRegex: ClozeRegExp;
-    private _clozeOLRegex: ClozeRegExp;
+    private _clozeSimpleRegex: ClozeRegExpImpl;
+    private _clozeClassicRegex: ClozeRegExpImpl;
+    private _clozeOLRegex: ClozeRegExpImpl;
 
     constructor(raw: string){
         this._raw = raw;
@@ -62,11 +47,11 @@ export class ClozeFormattingImpl implements ClozeFormatting {
 
         this.hintRegex = "(?:" + this.hintRegex + ")?"; // Cloze hint is always optional
 
-        this.clozeOrder = [clozeElement.text, clozeElement.hint, clozeElement.seq];
+        this.clozeOrder = [ClozeFieldEnum.text, ClozeFieldEnum.hint, ClozeFieldEnum.seq];
         let positions = {
-            [clozeElement.text]: raw.indexOf(clozeKeyword),
-            [clozeElement.hint]: this.hintFormatting.index,
-            [clozeElement.seq]: this.numFormatting.index
+            [ClozeFieldEnum.text]: raw.indexOf(clozeKeyword),
+            [ClozeFieldEnum.hint]: this.hintFormatting.index,
+            [ClozeFieldEnum.seq]: this.numFormatting.index
         };
 
         // Sort the indexes by their positions
@@ -97,7 +82,7 @@ export class ClozeFormattingImpl implements ClozeFormatting {
         return regexStr;
     }
 
-    get clozeSimpleRegex(): ClozeRegExp {
+    get clozeSimpleRegex(): ClozeRegExpImpl {
         if (this._clozeSimpleRegex != undefined){
             return this._clozeSimpleRegex;
         }
@@ -110,13 +95,13 @@ export class ClozeFormattingImpl implements ClozeFormatting {
             regexStr = this.generateClozeRegexStr(this.hintFormatting, this.hintRegex, this.numFormatting, "");
         }
 
-        let clozeOrderWithoutSeq = this.clozeOrder.filter((x) => x != clozeElement.seq);
-        this._clozeSimpleRegex =  new ClozeRegExp(regexStr, clozeOrderWithoutSeq, 'g');
+        let clozeOrderWithoutSeq = this.clozeOrder.filter((x) => x != ClozeFieldEnum.seq);
+        this._clozeSimpleRegex =  new ClozeRegExpImpl(regexStr, clozeOrderWithoutSeq, 'g');
 
         return this._clozeSimpleRegex;
     }
 
-    get clozeClassicRegex(): ClozeRegExp {
+    get clozeClassicRegex(): ClozeRegExpImpl {
         if (this._clozeClassicRegex != undefined){
             return this._clozeClassicRegex;
         }
@@ -129,12 +114,12 @@ export class ClozeFormattingImpl implements ClozeFormatting {
             regexStr = this.generateClozeRegexStr(this.hintFormatting, this.hintRegex, this.numFormatting, this.numRegex);
         }
 
-        this._clozeClassicRegex =  new ClozeRegExp(regexStr, this.clozeOrder, 'g');
+        this._clozeClassicRegex =  new ClozeRegExpImpl(regexStr, this.clozeOrder, 'g');
 
         return this._clozeClassicRegex;
     }
 
-    get clozeOLRegex(): ClozeRegExp {
+    get clozeOLRegex(): ClozeRegExpImpl {
         if (this._clozeOLRegex != undefined){
             return this._clozeOLRegex;
         }
@@ -147,7 +132,7 @@ export class ClozeFormattingImpl implements ClozeFormatting {
             regexStr = this.generateClozeRegexStr(this.hintFormatting, this.hintRegex, this.numFormatting, this.seqRegex);
         }
         
-        this._clozeOLRegex =  new ClozeRegExp(regexStr, this.clozeOrder, 'g');
+        this._clozeOLRegex =  new ClozeRegExpImpl(regexStr, this.clozeOrder, 'g');
 
         return this._clozeOLRegex;
     }
