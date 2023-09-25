@@ -56,15 +56,15 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements ClozeNote  {
         return false;
     }
 
-    getFront(card: number): string {
-        if (card > this._numCards || card < 1) {
-            throw new Error(`Card ${card} does not exist`);
+    getCardFront(cardIndex: number): string {
+        if (cardIndex > this._numCards || cardIndex < 1) {
+            throw new Error(`Card ${cardIndex} does not exist`);
         }
 
         let frontText = this.raw;
         for (const cloze of this._clozeDeletions) {
 
-            if (cloze.seq !== card) {
+            if (cloze.seq !== cardIndex) {
                 frontText = frontText.replace(cloze.raw, cloze.answer); // Just show
                 continue;
             }
@@ -79,15 +79,15 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements ClozeNote  {
         return frontText;
     }
 
-    getBack(card: number): string {
-        if (card > this._numCards || card < 1) {
-            throw new Error(`Card ${card} does not exist`);
+    getCardBack(cardIndex: number): string {
+        if (cardIndex > this._numCards || cardIndex < 1) {
+            throw new Error(`Card ${cardIndex} does not exist`);
         }
 
         let backText = this.raw;
         for (const cloze of this._clozeDeletions) {
 
-            if (cloze.seq === card) {
+            if (cloze.seq === cardIndex) {
                 backText = backText.replace(cloze.raw, format.showing(cloze.answer)); // Show as answer
             } else {
                 backText = backText.replace(cloze.raw, cloze.answer); // Just show

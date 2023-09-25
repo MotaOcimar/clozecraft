@@ -20,7 +20,7 @@ export class ClozeRegExpImpl implements ClozeRegExp {
         }
 
         // All clozes (Cloze simple, Cloze Classic and Cloze overlapping) have the cloze text and can have cloze hint
-        if (this.clozeOrder.indexOf(ClozeFieldEnum.text) == -1) {
+        if (this.clozeOrder.indexOf(ClozeFieldEnum.answer) == -1) {
             throw new Error("Cloze text not found in clozeOrder");
         }
         if (this.clozeOrder.indexOf(ClozeFieldEnum.hint) == -1) {
@@ -34,7 +34,7 @@ export class ClozeRegExpImpl implements ClozeRegExp {
             ans.clozeSeq = ans[this.clozeOrder.indexOf(ClozeFieldEnum.seq) + 1];
         }
 
-        ans.clozeText = ans[this.clozeOrder.indexOf(ClozeFieldEnum.text) + 1];
+        ans.clozeText = ans[this.clozeOrder.indexOf(ClozeFieldEnum.answer) + 1];
         ans.clozeHint = ans[this.clozeOrder.indexOf(ClozeFieldEnum.hint) + 1];
 
         return ans;

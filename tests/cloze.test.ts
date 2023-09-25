@@ -29,9 +29,9 @@ console.log(clozeNote.raw);
 
 let card = 3;
 
-let front = clozeNote.getFront(card);
+let front = clozeNote.getCardFront(card);
 console.log(front);
-let back = clozeNote.getBack(card);
+let back = clozeNote.getCardBack(card);
 console.log(back);
 
 
@@ -70,9 +70,9 @@ console.log(clozeNote.raw);
 
 card = 1;
 
-front = clozeNote.getFront(card);
+front = clozeNote.getCardFront(card);
 console.log(front);
-back = clozeNote.getBack(card);
+back = clozeNote.getCardBack(card);
 console.log(back);
 
 
@@ -88,7 +88,7 @@ console.log(clozeNote.raw);
 
 card = 1;
 
-front = clozeNote.getFront(card);
+front = clozeNote.getCardFront(card);
 console.log(front);
-back = clozeNote.getBack(card);
+back = clozeNote.getCardBack(card);
 console.log(back);

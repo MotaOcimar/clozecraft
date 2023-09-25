@@ -1,58 +1,82 @@
 import { ClozeDeletion } from "./cloze-deletion"
 
 /**
- * Interface ClozeNote
+ * **Interface ClozeNote**
  *
- * Represents a set of cloze test questions inside a context (cards).
- * It contains the original text, before being processed, and the list
- * of cloze test questions. It also provides methods to get
- * the front (question) and back (answer) of each card.
+ * Represents a complete text with one or more cloze deletions
+ * in it.
+ * 
+ * Cloze notes are used to generate cloze cards.
+ * 
+ * A cloze card is a question-answer pair that asks the user
+ * one or more cloze deletions.
+ * 
+ * For example, the following text:
+ * "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
+ * 
+ * Contains two cloze deletions:
+ * 1. "{{c1::Brazil::country}}"
+ * 2. "{{c2::Brazilians::nationality}}"
+ * 
+ * And can be used to generate two cloze cards:
+ * 
+ * **Card 1**:
+ * - **Front**: "People from _[country]_ are called Brazilians."
+ * - **Back**: "People from Brazil are called Brazilians."
+ * 
+ * **Card 2**:
+ * - **Front**: "People from Brazil are called _[nationality]_."
+ * - **Back**: "People from Brazil are called Brazilians."
  */
 export interface ClozeNote {
     
     /**
-     * Returns the raw text of the entire cloze note before processing.
-     * This includes all the cloze test questions and their content.
-     * Example: "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
+     * @returns {string} The raw text of the entire cloze note before processing.
+     * 
+     * @example
+     * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
      */
     get raw(): string;
-    
+
     /**
-     * Returns the list of cloze test questions in the cloze note.
-     * Example:
-     * [
-     *   { raw: "{{c1::Brazil::country}}", answer: "Brazil", seq: 1, hint: "country" },
-     *   { raw: "{{c2::Brazilians::nationality}}", answer: "Brazilians", seq: 2, hint: "nationality" }
-     * ]
+     * @returns {ClozeDeletion[]} The list of cloze deletions in the cloze note.
+     * 
+     * @example
+     * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
+     * console.log(clozeNote.clozeDeletions)
+     * // [
+     * //   { raw: "{{c1::Brazil::country}}", answer: "Brazil", seq: 1, hint: "country" },
+     * //   { raw: "{{c2::Brazilians::nationality}}", answer: "Brazilians", seq: 2, hint: "nationality" }
+     * // ]
      */
     get clozeDeletions(): ClozeDeletion[];
-    
+
     /**
-     * Returns the total number of cards in the cloze note.
-     * Example: 2 in "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
+     * @returns {number} The total number of cards that can be generated from the cloze note.
+     * 
+     * @example
+     * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
+     * console.log(clozeNote.numCards) // 2
      */
     get numCards(): number;
+
+    /**
+     * @param {number} cardIndex The index of the card (starting at 0).
+     * @returns {string} The front (question) of the i-th card that can be generated from the cloze note.
+     * 
+     * @example
+     * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
+     * console.log(clozeNote.getFront(0)) // People from [country] are called Brazilians.
+     */
+    getCardFront(cardIndex: number): string;
     
     /**
-     * Returns the front (question) part of a specific cloze test question identified by the index.
-     * The index starts at 0.
-     * Example:
-     * getFront(0) can return "People from [country] are called Brazilians."
-     * in "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
+     * @param {number} cardIndex The index of the card (starting at 0).
+     * @returns {string} The back (answer) of the i-th card that can be generated from the cloze note.
      * 
-     * @param card The index of the cloze test question (zero-based).
+     * @example
+     * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
+     * console.log(clozeNote.getBack(0)) // People from Brazil are called Brazilians.
      */
-    getFront(card: number): string;
-    
-    /**
-     * Returns the back (answer) part of a specific cloze test question identified by the index.
-     * The index starts at 0.
-     * Example:
-     * getBack(0) can return "People from Brazil are called Brazilians."
-     * in "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
-     * 
-     * @param card The index of the cloze test question (zero-based).
-     * @returns 
-     */
-    getBack(card: number): string;
+    getCardBack(cardIndex: number): string;
 }

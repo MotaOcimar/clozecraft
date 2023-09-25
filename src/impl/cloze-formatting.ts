@@ -47,9 +47,9 @@ export class ClozeFormattingImpl implements ClozeFormatting {
 
         this.hintRegex = "(?:" + this.hintRegex + ")?"; // Cloze hint is always optional
 
-        this.clozeOrder = [ClozeFieldEnum.text, ClozeFieldEnum.hint, ClozeFieldEnum.seq];
+        this.clozeOrder = [ClozeFieldEnum.answer, ClozeFieldEnum.hint, ClozeFieldEnum.seq];
         let positions = {
-            [ClozeFieldEnum.text]: raw.indexOf(clozeKeyword),
+            [ClozeFieldEnum.answer]: raw.indexOf(clozeKeyword),
             [ClozeFieldEnum.hint]: this.hintFormatting.index,
             [ClozeFieldEnum.seq]: this.numFormatting.index
         };

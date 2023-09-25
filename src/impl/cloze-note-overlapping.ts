@@ -56,12 +56,12 @@ export class ClozeNoteOL extends ClozeNoteDefault implements ClozeNote {
         return false;
     }
 
-    getFront(card: number): string {
-        if (card > this._numCards || card < 1) {
-            throw new Error(`Card ${card} does not exist`);
+    getCardFront(cardIndex: number): string {
+        if (cardIndex > this._numCards || cardIndex < 1) {
+            throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        card = card - 1; // card 1 is the first card, but the array starts at 0
+        cardIndex = cardIndex - 1; // card 1 is the first card, but the array starts at 0
 
         let frontText = this.raw;
         for (const cloze of this._clozeDeletions) {
@@ -71,8 +71,8 @@ export class ClozeNoteOL extends ClozeNoteDefault implements ClozeNote {
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
             let clozeAction = "s";
-            if ( card < cloze.seq.length ) {
-                clozeAction = cloze.seq[card];
+            if ( cardIndex < cloze.seq.length ) {
+                clozeAction = cloze.seq[cardIndex];
             }
 
             switch (clozeAction) {
@@ -94,12 +94,12 @@ export class ClozeNoteOL extends ClozeNoteDefault implements ClozeNote {
         return frontText;
     }
 
-    getBack(card: number): string {
-        if (card > this._numCards || card < 1) {
-            throw new Error(`Card ${card} does not exist`);
+    getCardBack(cardIndex: number): string {
+        if (cardIndex > this._numCards || cardIndex < 1) {
+            throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        card = card - 1; // card 1 is the first card, but the array starts at 0
+        cardIndex = cardIndex - 1; // card 1 is the first card, but the array starts at 0
 
         let backText = this.raw;
         for (const cloze of this._clozeDeletions) {
@@ -109,8 +109,8 @@ export class ClozeNoteOL extends ClozeNoteDefault implements ClozeNote {
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
             let clozeAction = "s";
-            if ( card < cloze.seq.length ) {
-                clozeAction = cloze.seq[card];
+            if ( cardIndex < cloze.seq.length ) {
+                clozeAction = cloze.seq[cardIndex];
             }
 
             switch (clozeAction) {
