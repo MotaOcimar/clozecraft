@@ -1,4 +1,4 @@
-import { ClozeDeletion } from "../interfaces/cloze-deletion";
+import { IClozeDeletion } from "../interfaces/IClozeDeletion";
 
 /**
  * Class ClozeNoteDefault
@@ -8,7 +8,7 @@ import { ClozeDeletion } from "../interfaces/cloze-deletion";
  */
 export class ClozeNoteDefault {
     protected _raw: string;
-    protected _clozeDeletions: ClozeDeletion[];
+    protected _clozeDeletions: IClozeDeletion[];
     protected _numCards: number;
 
     /**
@@ -39,7 +39,7 @@ export class ClozeNoteDefault {
      *   { raw: "{{c2::Brazilians::nationality}}", answer: "Brazilians", seq: 2, hint: "nationality" }
      * ]
      */
-    get clozeDeletions(): ClozeDeletion[] {
+    get clozeDeletions(): IClozeDeletion[] {
         return this._clozeDeletions;
     }
 

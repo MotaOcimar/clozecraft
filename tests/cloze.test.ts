@@ -1,17 +1,17 @@
-import { ClozeNoteOL } from "../src/impl/cloze-note-overlapping";
-import { ClozeNoteClassic } from "../src/impl/cloze-note-classic";
-import { ClozeNoteSimple } from "../src/impl/cloze-note-simple";
-import { ClozeFormattingImpl } from "../src/impl/cloze-formatting";
-import { ClozeNote } from "../src/interfaces/cloze-note";
+import { ClozeNoteOL } from "../src/implementation/ClozeNoteOL";
+import { ClozeNoteClassic } from "../src/implementation/ClozeNoteClassic";
+import { ClozeNoteSimple } from "../src/implementation/ClozeNoteSimple";
+import { ClozeFormatting } from "../src/implementation/ClozeFormatting";
+import { IClozeNote } from "../src/interfaces/IClozeNote";
 
 
 // Example of cloze classic:     "==cloze1==%%1%%^[hint]"
 // Example of cloze overlapping: "==cloze==%%ash%%^[hint]"
-let formatting1 = new ClozeFormattingImpl("==cloze==[%%123%%][^\\[hint\\]]");
+let formatting1 = new ClozeFormatting("==cloze==[%%123%%][^\\[hint\\]]");
 
 // Example of cloze classic:     "{c1::cloze1::hint}"
 // Example of cloze overlapping: "{cash::cloze::hint}
-let formatting2 = new ClozeFormattingImpl("{[c123::]cloze[::hint]}");
+let formatting2 = new ClozeFormatting("{[c123::]cloze[::hint]}");
 
 let formattings = [formatting1, formatting2];
 
@@ -22,7 +22,7 @@ console.log(ClozeNoteOL.isNote(text, formattings))
 console.log(ClozeNoteClassic.isNote(text, formattings))
 console.log(ClozeNoteSimple.isNote(text, formattings))
 
-let clozeNote: ClozeNote = new ClozeNoteOL(text, formattings);
+let clozeNote: IClozeNote = new ClozeNoteOL(text, formattings);
 
 console.log(clozeNote.clozeDeletions);
 console.log(clozeNote.raw);

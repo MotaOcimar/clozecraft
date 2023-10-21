@@ -1,5 +1,5 @@
-import { ClozeFormattingImpl } from "../src/impl/cloze-formatting";
-import { ClozeRegExpExecArray } from "../src/impl/cloze-reg-exp";
+import { ClozeFormatting } from "../src/implementation/ClozeFormatting";
+import { IClozeRegExpExecArray } from "../src/interfaces/IClozeRegExpExecArray";
 
 let text =
 "[cloze][%%\\[123\\]%%][^\\[hint\\]]\n\
@@ -30,7 +30,7 @@ let clozeSimpleExample =
 
 
 text.split("\n").forEach((line) => {
-    let clozeFormatting = new ClozeFormattingImpl(line);
+    let clozeFormatting = new ClozeFormatting(line);
 
     console.log("\n\n")
     console.log(line);
@@ -38,7 +38,7 @@ text.split("\n").forEach((line) => {
     // console.log(clozeFormatting.clozeClassicRegex);
     // console.log(clozeFormatting.clozeOLRegex);
 
-    let match: ClozeRegExpExecArray | null;
+    let match: IClozeRegExpExecArray | null;
     // while (match = clozeFormatting.clozeOLRegex.exec(clozeOLExample)) {
     //     console.log(clozeFormatting.clozeOLRegex)
     //     console.log("clozeText: " + match.clozeText);

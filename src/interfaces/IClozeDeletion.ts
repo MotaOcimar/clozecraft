@@ -14,7 +14,7 @@
  *   hint: "country"
  * }
  */
-export interface ClozeDeletion {
+export interface IClozeDeletion {
 
     /**
      * The original raw text of the cloze test question, before being processed.

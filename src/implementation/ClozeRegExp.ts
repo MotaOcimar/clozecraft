@@ -1,8 +1,8 @@
-import { ClozeFieldEnum } from "./cloze-field-enum";
-import { ClozeRegExp } from "../interfaces/cloze-reg-exp"
-import { ClozeRegExpExecArray } from "../interfaces/cloze-reg-exp-exec-array";
+import { ClozeFieldEnum } from "./ClozeFieldEnum";
+import { IClozeRegExp } from "../interfaces/IClozeRegExp"
+import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
 
-export class ClozeRegExpImpl implements ClozeRegExp {
+export class ClozeRegExp implements IClozeRegExp {
     readonly regex: RegExp;
     private readonly clozeOrder: ClozeFieldEnum[];
 
@@ -11,9 +11,9 @@ export class ClozeRegExpImpl implements ClozeRegExp {
         this.clozeOrder = clozeOrder;
     }
 
-    exec(str: string): ClozeRegExpExecArray | null {
+    exec(str: string): IClozeRegExpExecArray | null {
 
-        let ans = this.regex.exec(str) as ClozeRegExpExecArray;
+        let ans = this.regex.exec(str) as IClozeRegExpExecArray;
         
         if (!ans) {
             return null;

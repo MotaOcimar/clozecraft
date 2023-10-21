@@ -1,4 +1,4 @@
-import { ClozeDeletion } from "./cloze-deletion"
+import { IClozeDeletion } from "./IClozeDeletion"
 
 /**
  * **Interface ClozeNote**
@@ -28,7 +28,7 @@ import { ClozeDeletion } from "./cloze-deletion"
  * - **Front**: "People from Brazil are called _[nationality]_."
  * - **Back**: "People from Brazil are called Brazilians."
  */
-export interface ClozeNote {
+export interface IClozeNote {
     
     /**
      * @returns {string} The raw text of the entire cloze note before processing.
@@ -39,7 +39,7 @@ export interface ClozeNote {
     get raw(): string;
 
     /**
-     * @returns {ClozeDeletion[]} The list of cloze deletions in the cloze note.
+     * @returns {IClozeDeletion[]} The list of cloze deletions in the cloze note.
      * 
      * @example
      * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
@@ -49,7 +49,7 @@ export interface ClozeNote {
      * //   { raw: "{{c2::Brazilians::nationality}}", answer: "Brazilians", seq: 2, hint: "nationality" }
      * // ]
      */
-    get clozeDeletions(): ClozeDeletion[];
+    get clozeDeletions(): IClozeDeletion[];
 
     /**
      * @returns {number} The total number of cards that can be generated from the cloze note.

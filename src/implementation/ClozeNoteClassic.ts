@@ -1,20 +1,20 @@
-import { ClozeDeletionClassic } from "./cloze-deletion-classic";
-import { ClozeNote } from "../interfaces/cloze-note";
-import { ClozeNoteDefault } from "./cloze-note-default";
-import { ClozeFormattingImpl } from "./cloze-formatting";
-import { ClozeRegExpExecArray } from "../interfaces/cloze-reg-exp-exec-array";
+import { ClozeDeletionClassic } from "./ClozeDeletionClassic";
+import { IClozeNote } from "../interfaces/IClozeNote";
+import { ClozeNoteDefault } from "./ClozeNoteDefault";
+import { ClozeFormatting } from "./ClozeFormatting";
+import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
 import { format } from "./utils";
 
 
-export class ClozeNoteClassic extends ClozeNoteDefault implements ClozeNote  {
+export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
     protected _clozeDeletions: ClozeDeletionClassic[];
 
-    constructor(text: string, formattings: ClozeFormattingImpl[]) {
+    constructor(text: string, formattings: ClozeFormatting[]) {
         super(text);
         this.initParsing(text, formattings);
     }
 
-    protected initParsing(text: string, formattings: ClozeFormattingImpl[]): void {
+    protected initParsing(text: string, formattings: ClozeFormatting[]): void {
 
         let clozes: ClozeDeletionClassic[] = [];
         let numCards = 0
@@ -22,7 +22,7 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements ClozeNote  {
         formattings.forEach( (formatting) => {
             const regex = formatting.clozeClassicRegex;
 
-            let match: ClozeRegExpExecArray | null;
+            let match: IClozeRegExpExecArray | null;
 
             while (match = regex.exec(text)) {
 
@@ -46,7 +46,7 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements ClozeNote  {
         this._numCards = numCards;
     }
 
-    static isNote(text: string, formattings: ClozeFormattingImpl[]): boolean {
+    static isNote(text: string, formattings: ClozeFormatting[]): boolean {
         for (const formatting of formattings) {
             const regex = formatting.clozeClassicRegex;
             if ( regex.test(text) ){

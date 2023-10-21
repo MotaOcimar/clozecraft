@@ -1,3 +1,3 @@
-import { ClozeDeletionClassic } from './cloze-deletion-classic';
+import { ClozeDeletionClassic } from './ClozeDeletionClassic';
 
 export class ClozeDeletionSimple extends ClozeDeletionClassic {}
