@@ -36,7 +36,7 @@ export class ClozePattern implements IClozePattern {
             throw new Error("No cloze hint pattern found")
         }
         if (raw.indexOf(answerKeyword) == -1){
-            throw new Error("No \"cloze\" keyword found in the pattern")
+            throw new Error(`No answerkeyword (${answerKeyword}) found in the pattern.`)
         }
 
         this.numPattern = _numMatch;

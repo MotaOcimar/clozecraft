@@ -7,11 +7,11 @@ import { IClozeNote } from "../src/interfaces/IClozeNote";
 
 // Example of cloze classic:     "==cloze1==%%1%%^[hint]"
 // Example of cloze overlapping: "==cloze==%%ash%%^[hint]"
-let pattern1 = new ClozePattern("==cloze==[%%123%%][^\\[hint\\]]");
+let pattern1 = new ClozePattern("==answer==[%%123%%][^\\[hint\\]]");
 
 // Example of cloze classic:     "{c1::cloze1::hint}"
 // Example of cloze overlapping: "{cash::cloze::hint}
-let pattern2 = new ClozePattern("{[c123::]cloze[::hint]}");
+let pattern2 = new ClozePattern("{[c123::]answer[::hint]}");
 
 let patterns = [pattern1, pattern2];
 

@@ -3,6 +3,8 @@
         "target": "ES5",
     },
     "include": [
-      "*.ts"
-, "tests/cloze.test.ts", "src/implementation/utils.ts"    ]
+        "*.ts",
+        "src/implementation/*.ts",
+        "tests/*.ts"
+    ]
 }
