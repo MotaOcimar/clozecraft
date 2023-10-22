@@ -1,7 +1,7 @@
 import { ClozeDeletionOL } from "./ClozeDeletionOL";
 import { IClozeNote } from "../interfaces/IClozeNote";
 import { ClozeNoteDefault } from "./ClozeNoteDefault";
-import { ClozeFormatting } from "./ClozeFormatting";
+import { ClozePattern } from "./ClozePattern";
 import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
 import { format } from "./utils";
 
@@ -9,18 +9,18 @@ import { format } from "./utils";
 export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
     protected _clozeDeletions: ClozeDeletionOL[];
 
-    constructor(text: string, formattings: ClozeFormatting[]) {
+    constructor(text: string, patterns: ClozePattern[]) {
         super(text)
-        this.initParsing(text, formattings);
+        this.initParsing(text, patterns);
     }
 
-    protected initParsing(text: string, formattings: ClozeFormatting[]) {
+    protected initParsing(text: string, patterns: ClozePattern[]) {
 
         let clozes: ClozeDeletionOL[] = [];
         let numCards = 0
 
-        formattings.forEach( (formatting) => {
-            const regex = formatting.clozeOLRegex;
+        patterns.forEach( (pattern) => {
+            const regex = pattern.clozeOLRegex;
 
             let match: IClozeRegExpExecArray | null;
 
@@ -46,9 +46,9 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
         this._numCards = numCards;
     }
 
-    static isNote(text: string, formattings: ClozeFormatting[]): boolean {
-        for (const formatting of formattings) {
-            const regex = formatting.clozeOLRegex;
+    static isNote(text: string, patterns: ClozePattern[]): boolean {
+        for (const pattern of patterns) {
+            const regex = pattern.clozeOLRegex;
             if ( regex.test(text) ){
                 return true;
             }

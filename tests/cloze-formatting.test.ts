@@ -1,4 +1,4 @@
-import { ClozeFormatting } from "../src/implementation/ClozeFormatting";
+import { ClozePattern } from "../src/implementation/ClozePattern";
 import { IClozeRegExpExecArray } from "../src/interfaces/IClozeRegExpExecArray";
 
 let text =
@@ -30,35 +30,35 @@ let clozeSimpleExample =
 
 
 text.split("\n").forEach((line) => {
-    let clozeFormatting = new ClozeFormatting(line);
+    let clozePattern = new ClozePattern(line);
 
     console.log("\n\n")
     console.log(line);
-    // console.log(clozeFormatting.clozeSimpleRegex);
-    // console.log(clozeFormatting.clozeClassicRegex);
-    // console.log(clozeFormatting.clozeOLRegex);
+    // console.log(clozePattern.clozeSimpleRegex);
+    // console.log(clozePattern.clozeClassicRegex);
+    // console.log(clozePattern.clozeOLRegex);
 
     let match: IClozeRegExpExecArray | null;
-    // while (match = clozeFormatting.clozeOLRegex.exec(clozeOLExample)) {
-    //     console.log(clozeFormatting.clozeOLRegex)
+    // while (match = clozePattern.clozeOLRegex.exec(clozeOLExample)) {
+    //     console.log(clozePattern.clozeOLRegex)
     //     console.log("clozeText: " + match.clozeText);
     //     console.log("clozeHint: " + match.clozeHint);
     //     console.log("clozeSeq: " + match.clozeSeq);
     // }
 
-    // while (match = clozeFormatting.clozeClassicRegex.exec(clozeClassicExample)) {
-    //     console.log(clozeFormatting.clozeClassicRegex)
+    // while (match = clozePattern.clozeClassicRegex.exec(clozeClassicExample)) {
+    //     console.log(clozePattern.clozeClassicRegex)
     //     console.log("clozeText: " + match.clozeText);
     //     console.log("clozeHint: " + match.clozeHint);
     //     console.log("clozeSeq: " + match.clozeSeq);    
     // }
 
-    while (match = clozeFormatting.clozeSimpleRegex.exec(clozeSimpleExample)) {
-        console.log(clozeFormatting.clozeSimpleRegex)
+    while (match = clozePattern.clozeSimpleRegex.exec(clozeSimpleExample)) {
+        console.log(clozePattern.clozeSimpleRegex)
         console.log("match: " + match[0])
-        console.log("clozeText: " + match.clozeText);
-        console.log("clozeHint: " + match.clozeHint);
-        console.log("clozeSeq: " + match.clozeSeq);    
-    }        
-            
+        console.log("clozeText: " + match.answer);
+        console.log("clozeHint: " + match.hint);
+        console.log("clozeSeq: " + match.seq);
+    }
+
 });

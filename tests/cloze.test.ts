@@ -1,28 +1,28 @@
 import { ClozeNoteOL } from "../src/implementation/ClozeNoteOL";
 import { ClozeNoteClassic } from "../src/implementation/ClozeNoteClassic";
 import { ClozeNoteSimple } from "../src/implementation/ClozeNoteSimple";
-import { ClozeFormatting } from "../src/implementation/ClozeFormatting";
+import { ClozePattern } from "../src/implementation/ClozePattern";
 import { IClozeNote } from "../src/interfaces/IClozeNote";
 
 
 // Example of cloze classic:     "==cloze1==%%1%%^[hint]"
 // Example of cloze overlapping: "==cloze==%%ash%%^[hint]"
-let formatting1 = new ClozeFormatting("==cloze==[%%123%%][^\\[hint\\]]");
+let pattern1 = new ClozePattern("==cloze==[%%123%%][^\\[hint\\]]");
 
 // Example of cloze classic:     "{c1::cloze1::hint}"
 // Example of cloze overlapping: "{cash::cloze::hint}
-let formatting2 = new ClozeFormatting("{[c123::]cloze[::hint]}");
+let pattern2 = new ClozePattern("{[c123::]cloze[::hint]}");
 
-let formattings = [formatting1, formatting2];
+let patterns = [pattern1, pattern2];
 
 // Cloze Overlapping example usage
 let text = "This is a ==cloze1==%%ash%%^[hint1] ==cloze2==%%ha%% {csha::cloze3::hint3}";
 
-console.log(ClozeNoteOL.isNote(text, formattings))
-console.log(ClozeNoteClassic.isNote(text, formattings))
-console.log(ClozeNoteSimple.isNote(text, formattings))
+console.log(ClozeNoteOL.isNote(text, patterns))
+console.log(ClozeNoteClassic.isNote(text, patterns))
+console.log(ClozeNoteSimple.isNote(text, patterns))
 
-let clozeNote: IClozeNote = new ClozeNoteOL(text, formattings);
+let clozeNote: IClozeNote = new ClozeNoteOL(text, patterns);
 
 console.log(clozeNote.clozeDeletions);
 console.log(clozeNote.raw);
@@ -38,7 +38,7 @@ console.log(back);
 
 // test("Cloze Overlapping", () => {
 //     let text = "This is a ==cloze1==%%ash%%^[hint1] ==cloze2==%%ha%% {csha::cloze3::hint3}";
-//     let clozeNote = new ClozeOLNote(text, formattings);
+//     let clozeNote = new ClozeOLNote(text, patterns);
 //     expect(clozeNote.clozes.length).toBe(3);
 //     expect(clozeNote.clozes[0].text).toBe("cloze1");
 //     expect(clozeNote.clozes[0].hint).toBe("hint1");
@@ -60,10 +60,10 @@ console.log(back);
 
 // Cloze Classic example usage
 text = "This is a ==cloze1==%%1%%^[hint1] ==cloze2==%%2%% {c3::cloze3::hint3}";
-console.log(ClozeNoteOL.isNote(text, formattings))
-console.log(ClozeNoteClassic.isNote(text, formattings))
-console.log(ClozeNoteSimple.isNote(text, formattings))
-clozeNote = new ClozeNoteClassic(text, formattings);
+console.log(ClozeNoteOL.isNote(text, patterns))
+console.log(ClozeNoteClassic.isNote(text, patterns))
+console.log(ClozeNoteSimple.isNote(text, patterns))
+clozeNote = new ClozeNoteClassic(text, patterns);
 
 console.log(clozeNote.clozeDeletions);
 console.log(clozeNote.raw);
@@ -78,10 +78,10 @@ console.log(back);
 
 // Cloze Simple example usage
 text = "This is a ==cloze1==^[hint1] {cloze2::hint2} ==cloze3==";
-console.log(ClozeNoteOL.isNote(text, formattings))
-console.log(ClozeNoteClassic.isNote(text, formattings))
-console.log(ClozeNoteSimple.isNote(text, formattings))
-clozeNote = new ClozeNoteSimple(text, formattings);
+console.log(ClozeNoteOL.isNote(text, patterns))
+console.log(ClozeNoteClassic.isNote(text, patterns))
+console.log(ClozeNoteSimple.isNote(text, patterns))
+clozeNote = new ClozeNoteSimple(text, patterns);
 
 console.log(clozeNote.clozeDeletions);
 console.log(clozeNote.raw);

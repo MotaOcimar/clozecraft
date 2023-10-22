@@ -1,6 +1,6 @@
 import { IClozeRegExp } from "./IClozeRegExp";
 
-export interface IClozeFormatting {
+export interface IClozePattern {
     get clozeSimpleRegex(): IClozeRegExp;
     get clozeClassicRegex(): IClozeRegExp;
     get clozeOLRegex(): IClozeRegExp;
