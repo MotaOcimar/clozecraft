@@ -28,9 +28,9 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
 
                 let newCloze: ClozeDeletionOL = {
                     raw: match[0],
-                    answer: match.clozeText,
-                    seq: match.clozeSeq,
-                    hint: match.clozeText
+                    answer: match.answer,
+                    seq: match.seq,
+                    hint: match.answer
                 }
 
                 clozes.push(newCloze);

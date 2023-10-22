@@ -23,9 +23,9 @@ export class ClozeNoteSimple extends ClozeNoteClassic {
 
                 let newCloze: ClozeDeletionSimple = {
                     raw: match[0],
-                    answer: match.clozeText,
+                    answer: match.answer,
                     seq: numCards,
-                    hint: match.clozeHint
+                    hint: match.hint
                 }
 
                 clozes.push(newCloze);

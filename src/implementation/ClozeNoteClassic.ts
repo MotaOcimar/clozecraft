@@ -28,9 +28,9 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
 
                 let newCloze: ClozeDeletionClassic = {
                     raw: match[0],
-                    answer: match.clozeText,
-                    seq: parseInt(match.clozeSeq),
-                    hint: match.clozeHint
+                    answer: match.answer,
+                    seq: parseInt(match.seq),
+                    hint: match.hint
                 }
 
                 clozes.push(newCloze);

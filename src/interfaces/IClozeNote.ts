@@ -1,8 +1,6 @@
 import { IClozeDeletion } from "./IClozeDeletion"
 
 /**
- * **Interface ClozeNote**
- *
  * Represents a complete text with one or more cloze deletions
  * in it.
  * 
@@ -11,22 +9,22 @@ import { IClozeDeletion } from "./IClozeDeletion"
  * A cloze card is a question-answer pair that asks the user
  * one or more cloze deletions.
  * 
- * For example, the following text:
+ * For example, the following text is a cloze note:
  * "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
  * 
- * Contains two cloze deletions:
+ * It contains two cloze deletions:
  * 1. "{{c1::Brazil::country}}"
  * 2. "{{c2::Brazilians::nationality}}"
  * 
- * And can be used to generate two cloze cards:
+ * And it can be used to generate two cloze cards:
  * 
  * **Card 1**:
  * - **Front**: "People from _[country]_ are called Brazilians."
- * - **Back**: "People from Brazil are called Brazilians."
+ * - **Back**: "People from _Brazil_ are called Brazilians."
  * 
  * **Card 2**:
  * - **Front**: "People from Brazil are called _[nationality]_."
- * - **Back**: "People from Brazil are called Brazilians."
+ * - **Back**: "People from Brazil are called _Brazilians_."
  */
 export interface IClozeNote {
     

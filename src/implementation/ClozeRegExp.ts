@@ -29,13 +29,14 @@ export class ClozeRegExp implements IClozeRegExp {
 
         // But cloze simple doesn't have cloze seq
         if (this.clozeOrder.indexOf(ClozeFieldEnum.seq) == -1) {
-            ans.clozeSeq = null;
+            ans.seq = null;
         } else {
-            ans.clozeSeq = ans[this.clozeOrder.indexOf(ClozeFieldEnum.seq) + 1];
+            ans.seq = ans[this.clozeOrder.indexOf(ClozeFieldEnum.seq) + 1];
         }
 
-        ans.clozeText = ans[this.clozeOrder.indexOf(ClozeFieldEnum.answer) + 1];
-        ans.clozeHint = ans[this.clozeOrder.indexOf(ClozeFieldEnum.hint) + 1];
+        ans.raw = ans[0];
+        ans.answer = ans[this.clozeOrder.indexOf(ClozeFieldEnum.answer) + 1];
+        ans.hint = ans[this.clozeOrder.indexOf(ClozeFieldEnum.hint) + 1];
 
         return ans;
     }

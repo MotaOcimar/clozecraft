@@ -24,7 +24,7 @@ export class ClozeNoteDefault {
 
     /**
      * Returns the raw text of the entire cloze note before processing.
-     * This includes all the cloze test questions and their content.
+     * This includes all the cloze deletions and their content.
      * Example: "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
      */
     get raw(): string {
@@ -32,7 +32,7 @@ export class ClozeNoteDefault {
     }
 
     /**
-     * Returns the list of cloze test questions in the cloze note.
+     * Returns the list of cloze deletions in the cloze note.
      * Example:
      * [
      *   { raw: "{{c1::Brazil::country}}", answer: "Brazil", seq: 1, hint: "country" },
