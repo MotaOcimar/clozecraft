@@ -17,7 +17,7 @@ export class ClozePattern implements IClozePattern {
     private readonly numRegex: string;
     private readonly seqRegex: string;
 
-    private readonly clozeOrder: ClozeFieldEnum[];
+    private readonly _clozeFieldOrder: ClozeFieldEnum[];
 
     private _clozeSimpleRegex: ClozeRegExp;
     private _clozeClassicRegex: ClozeRegExp;
@@ -47,7 +47,7 @@ export class ClozePattern implements IClozePattern {
 
         this.hintRegex = "(?:" + this.hintRegex + ")?"; // Cloze hint is always optional
 
-        this.clozeOrder = [ClozeFieldEnum.answer, ClozeFieldEnum.hint, ClozeFieldEnum.seq];
+        this._clozeFieldOrder = [ClozeFieldEnum.answer, ClozeFieldEnum.hint, ClozeFieldEnum.seq];
         let positions = {
             [ClozeFieldEnum.answer]: raw.indexOf(answerKeyword),
             [ClozeFieldEnum.hint]: this.hintPattern.index,
@@ -55,7 +55,7 @@ export class ClozePattern implements IClozePattern {
         };
 
         // Sort the indexes by their positions
-        this.clozeOrder.sort((a, b) => positions[a] - positions[b]);
+        this._clozeFieldOrder.sort((a, b) => positions[a] - positions[b]);
     }
 
     private static processPattern(text: string, rplc: Function): string{
@@ -95,7 +95,7 @@ export class ClozePattern implements IClozePattern {
             regexStr = this.generateClozeRegexStr(this.hintPattern, this.hintRegex, this.numPattern, "");
         }
 
-        let clozeOrderWithoutSeq = this.clozeOrder.filter((x) => x != ClozeFieldEnum.seq);
+        let clozeOrderWithoutSeq = this._clozeFieldOrder.filter((x) => x != ClozeFieldEnum.seq);
         this._clozeSimpleRegex =  new ClozeRegExp(regexStr, clozeOrderWithoutSeq, 'g');
 
         return this._clozeSimpleRegex;
@@ -114,7 +114,7 @@ export class ClozePattern implements IClozePattern {
             regexStr = this.generateClozeRegexStr(this.hintPattern, this.hintRegex, this.numPattern, this.numRegex);
         }
 
-        this._clozeClassicRegex =  new ClozeRegExp(regexStr, this.clozeOrder, 'g');
+        this._clozeClassicRegex =  new ClozeRegExp(regexStr, this._clozeFieldOrder, 'g');
 
         return this._clozeClassicRegex;
     }
@@ -132,9 +132,13 @@ export class ClozePattern implements IClozePattern {
             regexStr = this.generateClozeRegexStr(this.hintPattern, this.hintRegex, this.numPattern, this.seqRegex);
         }
         
-        this._clozeOLRegex =  new ClozeRegExp(regexStr, this.clozeOrder, 'g');
+        this._clozeOLRegex =  new ClozeRegExp(regexStr, this._clozeFieldOrder, 'g');
 
         return this._clozeOLRegex;
+    }
+
+    get clozeFieldsOrder(): ClozeFieldEnum[] {
+        return this._clozeFieldOrder;
     }
 
     hasClozeSimple(text: string): boolean {

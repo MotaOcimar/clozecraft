@@ -5,6 +5,8 @@ export interface IClozePattern {
     get clozeClassicRegex(): IClozeRegExp;
     get clozeOLRegex(): IClozeRegExp;
 
+    get clozeFieldsOrder(): string[];
+
     hasClozeSimple(text: string): boolean;
     hasClozeClassic(text: string): boolean;
     hasClozeOL(text: string): boolean;
