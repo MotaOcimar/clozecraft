@@ -5,6 +5,5 @@
     "include": [
         "*.ts",
         "src/implementation/*.ts",
-        "tests/*.ts"
     ]
 }
