@@ -1,4 +1,5 @@
 import { IClozeDeletion } from "../interfaces/IClozeDeletion";
+import { IClozeNote } from "../interfaces/IClozeNote";
 import { ClozeTypeEnum } from "./ClozeTypeEnum";
 
 /**
@@ -7,7 +8,7 @@ import { ClozeTypeEnum } from "./ClozeTypeEnum";
  * This class is not meant to be used directly. It serves as a base implementation
  * for common methods used in other implementations of ClozeNote.
  */
-export class ClozeNoteDefault {
+export abstract class ClozeNoteDefault implements IClozeNote {
     protected _raw: string;
     protected _clozeDeletions: IClozeDeletion[];
     protected _numCards: number;
@@ -24,40 +25,22 @@ export class ClozeNoteDefault {
         this._numCards = 0;
     }
 
-    /**
-     * Returns the type of cloze note.
-     * Example: ClozeTypeEnum.SIMPLE
-     */
     get clozeType(): ClozeTypeEnum {
         return this._clozeType;
     }
 
-    /**
-     * Returns the raw text of the entire cloze note before processing.
-     * This includes all the cloze deletions and their content.
-     * Example: "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
-     */
     get raw(): string {
         return this._raw;
     }
 
-    /**
-     * Returns the list of cloze deletions in the cloze note.
-     * Example:
-     * [
-     *   { raw: "{{c1::Brazil::country}}", answer: "Brazil", seq: 1, hint: "country" },
-     *   { raw: "{{c2::Brazilians::nationality}}", answer: "Brazilians", seq: 2, hint: "nationality" }
-     * ]
-     */
     get clozeDeletions(): IClozeDeletion[] {
         return this._clozeDeletions;
     }
 
-    /**
-     * Returns the total number of cards in the cloze note.
-     * Example: 2 in "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
-     */
     get numCards(): number {
         return this._numCards;
     }
+
+    abstract getCardFront(cardIndex: number): string;
+    abstract getCardBack(cardIndex: number): string;
 }
