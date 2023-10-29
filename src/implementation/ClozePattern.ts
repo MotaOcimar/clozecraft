@@ -2,6 +2,7 @@ import { escapeRegexString } from "./utils";
 import { ClozeRegExp } from "./ClozeRegExp";
 import { IClozePattern } from "../interfaces/IClozePattern";
 import { ClozeFieldEnum } from "./ClozeFieldEnum";
+import { ClozeTypeEnum, ClozeTypesPriority } from "./ClozeTypeEnum";
 
 const numPatternRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?\\d+(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
 const hintPatternRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?hint(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
@@ -19,9 +20,17 @@ export class ClozePattern implements IClozePattern {
 
     private readonly _clozeFieldOrder: ClozeFieldEnum[];
 
-    private _clozeSimpleRegex: ClozeRegExp;
-    private _clozeClassicRegex: ClozeRegExp;
-    private _clozeOLRegex: ClozeRegExp;
+    private clozeRegexByType: { [key in ClozeTypeEnum]: ClozeRegExp } = {
+        [ClozeTypeEnum.CLASSIC]: undefined,
+        [ClozeTypeEnum.OVERLAPPING]: undefined,
+        [ClozeTypeEnum.SIMPLE]: undefined,
+    };
+
+    private generateClozeRegexByType: { [key in ClozeTypeEnum]: () => ClozeRegExp } = {
+        [ClozeTypeEnum.CLASSIC]: this.generateClozeClassicRegex,
+        [ClozeTypeEnum.OVERLAPPING]: this.generateClozeOLRegex,
+        [ClozeTypeEnum.SIMPLE]: this.generateClozeSimpleRegex,
+    };
 
     constructor(raw: string){
         this._raw = raw;
@@ -77,16 +86,12 @@ export class ClozePattern implements IClozePattern {
             secondReplace +
             escapeRegexString(ending);
     
-        regexStr = regexStr.replace(answerKeyword, "(.+?)"); // clozeKeyword must not have regex special characters
+        regexStr = regexStr.replace(answerKeyword, "(.+?)"); // answerKeyword must not have regex special characters
     
         return regexStr;
     }
 
-    get clozeSimpleRegex(): ClozeRegExp {
-        if (this._clozeSimpleRegex != undefined){
-            return this._clozeSimpleRegex;
-        }
-
+    private generateClozeSimpleRegex(): ClozeRegExp {
         let regexStr: string;
 
         if (this.numPattern.index < this.hintPattern.index) {
@@ -96,16 +101,10 @@ export class ClozePattern implements IClozePattern {
         }
 
         let clozeOrderWithoutSeq = this._clozeFieldOrder.filter((x) => x != ClozeFieldEnum.seq);
-        this._clozeSimpleRegex =  new ClozeRegExp(regexStr, clozeOrderWithoutSeq, 'g');
-
-        return this._clozeSimpleRegex;
+        return new ClozeRegExp(regexStr, clozeOrderWithoutSeq, 'g');
     }
 
-    get clozeClassicRegex(): ClozeRegExp {
-        if (this._clozeClassicRegex != undefined){
-            return this._clozeClassicRegex;
-        }
-
+    private generateClozeClassicRegex(): ClozeRegExp {
         let regexStr: string;
 
         if (this.numPattern.index < this.hintPattern.index) {
@@ -114,16 +113,10 @@ export class ClozePattern implements IClozePattern {
             regexStr = this.generateClozeRegexStr(this.hintPattern, this.hintRegex, this.numPattern, this.numRegex);
         }
 
-        this._clozeClassicRegex =  new ClozeRegExp(regexStr, this._clozeFieldOrder, 'g');
-
-        return this._clozeClassicRegex;
+        return new ClozeRegExp(regexStr, this._clozeFieldOrder, 'g');
     }
 
-    get clozeOLRegex(): ClozeRegExp {
-        if (this._clozeOLRegex != undefined){
-            return this._clozeOLRegex;
-        }
-
+    private generateClozeOLRegex(): ClozeRegExp {
         let regexStr: string;
 
         if (this.numPattern.index < this.hintPattern.index) {
@@ -132,26 +125,51 @@ export class ClozePattern implements IClozePattern {
             regexStr = this.generateClozeRegexStr(this.hintPattern, this.hintRegex, this.numPattern, this.seqRegex);
         }
         
-        this._clozeOLRegex =  new ClozeRegExp(regexStr, this._clozeFieldOrder, 'g');
-
-        return this._clozeOLRegex;
+        return new ClozeRegExp(regexStr, this._clozeFieldOrder, 'g');
     }
 
     get clozeFieldsOrder(): ClozeFieldEnum[] {
         return this._clozeFieldOrder;
     }
 
-    hasClozeSimple(text: string): boolean {
-        return !this.clozeClassicRegex.test(text) && // A valid Cloze Classic text is also a valid Cloze Simple text
-               !this.clozeOLRegex.test(text) && // A valid Cloze OL text is also a valid Cloze Simple text
-               this.clozeSimpleRegex.test(text);
+    getClozeRegex(clozeType: ClozeTypeEnum): ClozeRegExp {
+        if (this.clozeRegexByType[clozeType] != undefined){
+            return this.clozeRegexByType[clozeType];
+        }
+
+        const clozeRegex = this.generateClozeRegexByType[clozeType]();
+        this.clozeRegexByType[clozeType] = clozeRegex;
+        return clozeRegex;
     }
 
-    hasClozeClassic(text: string): boolean {
-        return this.clozeClassicRegex.test(text);
+    hasClozeType(text: string, clozeType: ClozeTypeEnum): boolean {
+        for (const priorityType of ClozeTypesPriority) {
+            if (this.getClozeRegex(priorityType).test(text)) {
+                return clozeType == priorityType;
+            }
+        }
+
+        return false;
     }
 
-    hasClozeOL(text: string): boolean {
-        return this.clozeOLRegex.test(text);
+    getClozeTypes(text: string): ClozeTypeEnum[] {
+        const clozeTypes: ClozeTypeEnum[] = [];
+        for (const priorityType of ClozeTypesPriority) {
+            if (this.getClozeRegex(priorityType).test(text)) {
+                clozeTypes.push(priorityType);
+            }
+        }
+
+        return clozeTypes;
+    }
+
+    getMainClozeType(text: string): ClozeTypeEnum | null {
+        for (const priorityType of ClozeTypesPriority) {
+            if (this.getClozeRegex(priorityType).test(text)) {
+                return priorityType;
+            }
+        }
+
+        return null;
     }
 }

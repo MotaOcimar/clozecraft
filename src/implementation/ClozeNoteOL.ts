@@ -1,26 +1,28 @@
 import { ClozeDeletionOL } from "./ClozeDeletionOL";
 import { IClozeNote } from "../interfaces/IClozeNote";
 import { ClozeNoteDefault } from "./ClozeNoteDefault";
-import { ClozePattern } from "./ClozePattern";
+import { IClozePattern } from "../interfaces/IClozePattern";
 import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
 import { format } from "./utils";
+import { ClozeTypeEnum } from "./ClozeTypeEnum";
 
 
 export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
     protected _clozeDeletions: ClozeDeletionOL[];
 
-    constructor(text: string, patterns: ClozePattern[]) {
-        super(text)
+    constructor(text: string, patterns: IClozePattern[]) {
+        super(text);
+        this._clozeType = ClozeTypeEnum.OVERLAPPING;
         this.initParsing(text, patterns);
     }
 
-    protected initParsing(text: string, patterns: ClozePattern[]) {
+    protected initParsing(text: string, patterns: IClozePattern[]) {
 
         let clozes: ClozeDeletionOL[] = [];
         let numCards = 0
 
         patterns.forEach( (pattern) => {
-            const regex = pattern.clozeOLRegex;
+            const regex = pattern.getClozeRegex(ClozeTypeEnum.OVERLAPPING)
 
             let match: IClozeRegExpExecArray | null;
 
@@ -44,16 +46,6 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
 
         this._clozeDeletions = clozes;
         this._numCards = numCards;
-    }
-
-    static isNote(text: string, patterns: ClozePattern[]): boolean {
-        for (const pattern of patterns) {
-            const regex = pattern.clozeOLRegex;
-            if ( regex.test(text) ){
-                return true;
-            }
-        }
-        return false;
     }
 
     getCardFront(cardIndex: number): string {

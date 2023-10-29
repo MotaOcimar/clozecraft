@@ -1,19 +1,25 @@
-import { ClozePattern } from "./ClozePattern";
+import { IClozePattern } from "../interfaces/IClozePattern";
 import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
 import { ClozeDeletionSimple } from "./ClozeDeletionSimple";
 import { ClozeNoteClassic } from "./ClozeNoteClassic";
+import { ClozeTypeEnum } from "./ClozeTypeEnum";
 
 export class ClozeNoteSimple extends ClozeNoteClassic {
     protected _clozeDeletions: ClozeDeletionSimple[];
 
+    constructor(text: string, patterns: IClozePattern[]) {
+        super(text, patterns);
+        this._clozeType = ClozeTypeEnum.SIMPLE;
+    }
+
     // Override
-    protected initParsing(text: string, patterns: ClozePattern[]) {
+    protected initParsing(text: string, patterns: IClozePattern[]) {
 
         let clozes: ClozeDeletionSimple[] = [];
-        let numCards = 0
+        let numCards = 0;
 
         patterns.forEach( (pattern) => {
-            const regex = pattern.clozeSimpleRegex;
+            const regex = pattern.getClozeRegex(ClozeTypeEnum.SIMPLE)
 
             let match: IClozeRegExpExecArray | null;
 
@@ -34,15 +40,5 @@ export class ClozeNoteSimple extends ClozeNoteClassic {
 
         this._clozeDeletions = clozes;
         this._numCards = numCards;
-    }
-
-    static isNote(text: string, patterns: ClozePattern[]): boolean {
-        for (const pattern of patterns) {
-            const regex = pattern.clozeSimpleRegex;
-            if ( regex.test(text) ){
-                return true;
-            }
-        }
-        return false;
     }
 }

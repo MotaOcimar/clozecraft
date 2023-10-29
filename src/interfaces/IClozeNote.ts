@@ -1,3 +1,4 @@
+import { ClozeTypeEnum } from "../implementation/ClozeTypeEnum";
 import { IClozeDeletion } from "./IClozeDeletion"
 
 /**
@@ -27,7 +28,19 @@ import { IClozeDeletion } from "./IClozeDeletion"
  * - **Back**: "People from Brazil are called _Brazilians_."
  */
 export interface IClozeNote {
-    
+
+    /**
+    * @returns {ClozeTypeEnum} The type of cloze note.
+    * 
+    * @example
+    * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
+    * console.log(clozeNote.getClozeType()) // ClozeTypeEnum.CLASSIC
+    * 
+    * console.log(clozeNote2.raw) // "People from {Brazil::country} are called {Brazilians::nationality}."
+    * console.log(clozeNote2.getClozeType()) // ClozeTypeEnum.SIMPLE
+    */
+    get clozeType(): ClozeTypeEnum;
+
     /**
      * @returns {string} The raw text of the entire cloze note before processing.
      * 

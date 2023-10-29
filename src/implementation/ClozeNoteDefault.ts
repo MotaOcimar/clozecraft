@@ -1,4 +1,5 @@
 import { IClozeDeletion } from "../interfaces/IClozeDeletion";
+import { ClozeTypeEnum } from "./ClozeTypeEnum";
 
 /**
  * Class ClozeNoteDefault
@@ -10,6 +11,7 @@ export class ClozeNoteDefault {
     protected _raw: string;
     protected _clozeDeletions: IClozeDeletion[];
     protected _numCards: number;
+    protected _clozeType: ClozeTypeEnum;
 
     /**
      * Creates a new ClozeNoteDefault instance.
@@ -20,6 +22,14 @@ export class ClozeNoteDefault {
         this._raw = raw;
         this._clozeDeletions = [];
         this._numCards = 0;
+    }
+
+    /**
+     * Returns the type of cloze note.
+     * Example: ClozeTypeEnum.SIMPLE
+     */
+    get clozeType(): ClozeTypeEnum {
+        return this._clozeType;
     }
 
     /**

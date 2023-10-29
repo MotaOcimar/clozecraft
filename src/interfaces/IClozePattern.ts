@@ -1,13 +1,11 @@
+import { ClozeTypeEnum } from "../implementation/ClozeTypeEnum";
 import { IClozeRegExp } from "./IClozeRegExp";
 
 export interface IClozePattern {
-    get clozeSimpleRegex(): IClozeRegExp;
-    get clozeClassicRegex(): IClozeRegExp;
-    get clozeOLRegex(): IClozeRegExp;
-
     get clozeFieldsOrder(): string[];
-
-    hasClozeSimple(text: string): boolean;
-    hasClozeClassic(text: string): boolean;
-    hasClozeOL(text: string): boolean;
+    
+    getClozeRegex(clozeType: ClozeTypeEnum): IClozeRegExp;
+    hasClozeType(text: string, clozeType: ClozeTypeEnum): boolean;
+    getClozeTypes(text: string): ClozeTypeEnum[];
+    getMainClozeType(text: string): ClozeTypeEnum | null;
 }
