@@ -3,6 +3,7 @@
         "target": "ES5",
     },
     "include": [
-      "*.ts"
+        "*.ts",
+        "src/implementation/*.ts",
     ]
 }
