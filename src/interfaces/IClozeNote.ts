@@ -1,5 +1,5 @@
 import { ClozeTypeEnum } from "../implementation/ClozeTypeEnum";
-import { IClozeDeletion } from "./IClozeDeletion"
+import { IClozeFormat } from "./IClozeFormat";
 
 /**
  * Represents a complete text with one or more cloze deletions
@@ -50,19 +50,6 @@ export interface IClozeNote {
     get raw(): string;
 
     /**
-     * @returns {IClozeDeletion[]} The list of cloze deletions in the cloze note.
-     * 
-     * @example
-     * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
-     * console.log(clozeNote.clozeDeletions)
-     * // [
-     * //   { raw: "{{c1::Brazil::country}}", answer: "Brazil", seq: 1, hint: "country" },
-     * //   { raw: "{{c2::Brazilians::nationality}}", answer: "Brazilians", seq: 2, hint: "nationality" }
-     * // ]
-     */
-    get clozeDeletions(): IClozeDeletion[];
-
-    /**
      * @returns {number} The total number of cards that can be generated from the cloze note.
      * 
      * @example
@@ -79,7 +66,7 @@ export interface IClozeNote {
      * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
      * console.log(clozeNote.getFront(0)) // People from [country] are called Brazilians.
      */
-    getCardFront(cardIndex: number): string;
+    getCardFront(cardIndex: number, format?: IClozeFormat): string;
     
     /**
      * @param {number} cardIndex The index of the card (starting at 0).
@@ -89,5 +76,5 @@ export interface IClozeNote {
      * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
      * console.log(clozeNote.getBack(0)) // People from Brazil are called Brazilians.
      */
-    getCardBack(cardIndex: number): string;
+    getCardBack(cardIndex: number, format?:IClozeFormat): string;
 }

@@ -3,8 +3,9 @@ import { IClozeNote } from "../interfaces/IClozeNote";
 import { ClozeNoteDefault } from "./ClozeNoteDefault";
 import { IClozePattern } from "../interfaces/IClozePattern";
 import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
-import { format } from "./utils";
+import { simpleFormat } from "./utils";
 import { ClozeTypeEnum } from "./ClozeTypeEnum";
+import { IClozeFormat } from "../interfaces/IClozeFormat";
 
 
 export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
@@ -18,8 +19,8 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
 
     protected initParsing(text: string, patterns: IClozePattern[]) {
 
-        let clozes: ClozeDeletionOL[] = [];
-        let numCards = 0
+        let deletions: ClozeDeletionOL[] = [];
+        let numCards = 0;
 
         patterns.forEach( (pattern) => {
             const regex = pattern.getClozeRegex(ClozeTypeEnum.OVERLAPPING)
@@ -29,13 +30,13 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
             while (match = regex.exec(text)) {
 
                 let newCloze: ClozeDeletionOL = {
-                    raw: match[0],
+                    raw: match.raw,
                     answer: match.answer,
                     seq: match.seq,
                     hint: match.answer
-                }
+                };
 
-                clozes.push(newCloze);
+                deletions.push(newCloze);
 
                 // Get the max seq length
                 if (numCards < newCloze.seq.length) {
@@ -44,76 +45,80 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
             }
         } )
 
-        this._clozeDeletions = clozes;
+        this._clozeDeletions = deletions;
         this._numCards = numCards;
     }
 
-    getCardFront(cardIndex: number): string {
-        if (cardIndex > this._numCards || cardIndex < 1) {
+    getCardFront(cardIndex: number, format?:IClozeFormat): string {
+        if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        cardIndex = cardIndex - 1; // card 1 is the first card, but the array starts at 0
+        if (!format) {
+            format = new simpleFormat();
+        }
 
         let frontText = this.raw;
-        for (const cloze of this._clozeDeletions) {
+        for (const deletion of this._clozeDeletions) {
 
             // If the cloze has a sequence that does not specify the action on a certain card 
             // (a shorter sequence length than on other clozes), the default action will be just show
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
             let clozeAction = "s";
-            if ( cardIndex < cloze.seq.length ) {
-                clozeAction = cloze.seq[cardIndex];
+            if ( cardIndex < deletion.seq.length ) {
+                clozeAction = deletion.seq[cardIndex];
             }
 
             switch (clozeAction) {
                 case "a":
-                    if (cloze.hint !== undefined) {
-                        frontText = frontText.replace(cloze.raw, format.asking(`[${cloze.hint}]`)); // Hide asked cloze with hint
+                    if (deletion.hint !== undefined) {
+                        frontText = frontText.replace(deletion.raw, format.hinting(deletion.hint)); // Hide asked cloze with hint
                         break;
                     }
-                    frontText = frontText.replace(cloze.raw, format.asking(`[...]`)); // Hide asked cloze
+                    frontText = frontText.replace(deletion.raw, format.asking(deletion.answer)); // Hide asked cloze
                     break;
                 case "h":
-                    frontText = frontText.replace(cloze.raw, `...`); // Just hide
+                    frontText = frontText.replace(deletion.raw, format.hiding(deletion.answer)); // Just hide
                     break;
                 case "s":
-                    frontText = frontText.replace(cloze.raw, cloze.answer); // Just show
+                    frontText = frontText.replace(deletion.raw, deletion.answer); // Just show
                     break;
             }
         }
         return frontText;
     }
 
-    getCardBack(cardIndex: number): string {
-        if (cardIndex > this._numCards || cardIndex < 1) {
+    getCardBack(cardIndex: number, format?:IClozeFormat): string {
+        if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        cardIndex = cardIndex - 1; // card 1 is the first card, but the array starts at 0
+        if (!format) {
+            format = new simpleFormat();
+        }
 
         let backText = this.raw;
-        for (const cloze of this._clozeDeletions) {
+        for (const deletion of this._clozeDeletions) {
 
             // If the cloze has a sequence that does not specify the action on a certain card 
             // (a shorter sequence length than on other clozes), the default action will be just show
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
             let clozeAction = "s";
-            if ( cardIndex < cloze.seq.length ) {
-                clozeAction = cloze.seq[cardIndex];
+            if ( cardIndex < deletion.seq.length ) {
+                clozeAction = deletion.seq[cardIndex];
             }
 
             switch (clozeAction) {
                 case "a":
-                    backText = backText.replace(cloze.raw, format.showing(cloze.answer)); // Show as answer
+                    backText = backText.replace(deletion.raw, format.showing(deletion.answer)); // Show as answer
                     break;
                 case "h":
-                    backText = backText.replace(cloze.raw, `...`); // Just hide
+                    backText = backText.replace(deletion.raw, format.hiding(deletion.answer)); // Just hide
                     break;
                 case "s":
-                    backText = backText.replace(cloze.raw, cloze.answer); // Just show
+                    backText = backText.replace(deletion.raw, deletion.answer); // Just show
                     break;
             }
         }
