@@ -1,30 +1,166 @@
 import { ClozeTypeEnum } from "../../src/implementation/ClozeTypeEnum";
 
-const ankiLikeNotes = [
-    {
-        clozeType: ClozeTypeEnum.CLASSIC,
-        raw: "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}.",
-        numCards: 2,
-        getCardFront: (cardIndex: number) => {
-            switch (cardIndex) {
-                case 0:
-                    return "People from [country] are called Brazilians.";
-                case 1:
-                    return "People from Brazil are called [nationality]."
+const ankiLikeNotes = {
+    patternStr: '{{[c123::]answer[::hint]}}',
+    noteList: [
+        {
+            _noteDescription: "Classic Anki like note. With hints.",
+            clozeType: ClozeTypeEnum.CLASSIC,
+            raw: "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}.",
+            numCards: 2,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from [country] are called Brazilians.";
+                    case 1:
+                        return "People from Brazil are called [nationality].";
+                }
+                throw new Error("Invalid card index.");
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from Brazil are called Brazilians.";
+                    case 1:
+                        return "People from Brazil are called Brazilians.";
+                }
+                throw new Error("Invalid card index.");
             }
-            throw new Error("Invalid card index.");
         },
-        getCardBack: (cardIndex: number) => {
-            switch (cardIndex) {
-                case 0:
-                    return "People from Brazil are called Brazilians.";
-                case 1:
-                    return "People from Brazil are called Brazilians."
+        {
+            _noteDescription: "Classic Anki like note. Without hints.",
+            clozeType: ClozeTypeEnum.CLASSIC,
+            raw: "People from {{c1::Brazil}} are called {{c2::Brazilians}}.",
+            numCards: 2,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from [...] are called Brazilians.";
+                    case 1:
+                        return "People from Brazil are called [...].";
+                }
+                throw new Error("Invalid card index.");
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from Brazil are called Brazilians.";
+                    case 1:
+                        return "People from Brazil are called Brazilians.";
+                }
+                throw new Error("Invalid card index.");
             }
-            throw new Error("Invalid card index.");
+        },
+        {
+            _noteDescription: "Classic Anki like note. Mixed hints. A card has multiple clozes.",
+            clozeType: ClozeTypeEnum.CLASSIC,
+            raw: "People from {{c1::Brazil::country}} are called {{c1::Brazilians::nationality}} and speak {{c2::Portuguese}}.",
+            numCards: 2,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from [country] are called [nationality] and speak Portuguese.";
+                    case 1:
+                        return "People from Brazil are called Brazilians and speak [...].";
+                }
+                throw new Error("Invalid card index.");
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from Brazil are called Brazilians and speak Portuguese.";
+                    case 1:
+                        return "People from Brazil are called Brazilians and speak Portuguese.";
+                }
+                throw new Error("Invalid card index.");
+            }
+        },
+        {
+            _noteDescription: "Simple Anki like note. With hints.",
+            clozeType: ClozeTypeEnum.SIMPLE,
+            raw: "People from {{Brazil::country}} are called {{Brazilians::nationality}} and speak {{Portuguese::language}}.",
+            numCards: 3,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from [country] are called Brazilians and speak Portuguese.";
+                    case 1:
+                        return "People from Brazil are called [nationality] and speak Portuguese.";
+                    case 2:
+                        return "People from Brazil are called Brazilians and speak [language].";
+                }
+                throw new Error("Invalid card index.");
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from Brazil are called Brazilians and speak Portuguese.";
+                    case 1:
+                        return "People from Brazil are called Brazilians and speak Portuguese.";
+                    case 2:
+                        return "People from Brazil are called Brazilians and speak Portuguese.";
+                }
+                throw new Error("Invalid card index. Mixed hints");
+            }
+        },
+        {
+            _noteDescription: "Simple Anki like note. Without hints.",
+            clozeType: ClozeTypeEnum.SIMPLE,
+            raw: "People from {{Brazil}} are called {{Brazilians}} and speak {{Portuguese::language}}.",
+            numCards: 3,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from [...] are called Brazilians and speak Portuguese.";
+                    case 1:
+                        return "People from Brazil are called [...] and speak Portuguese.";
+                    case 2:
+                        return "People from Brazil are called Brazilians and speak [language].";
+                }
+                throw new Error("Invalid card index.");
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from Brazil are called Brazilians and speak Portuguese.";
+                    case 1:
+                        return "People from Brazil are called Brazilians and speak Portuguese.";
+                    case 2:
+                        return "People from Brazil are called Brazilians and speak Portuguese.";
+                }
+                throw new Error("Invalid card index.");
+            }
+        },
+        {
+            _noteDescription: "Overlapping Anki like note. With mixed hints.",
+            clozeType: ClozeTypeEnum.OVERLAPPING,
+            raw: "People from {{cssa::Brazil::country}} are called {{cahs::Brazilians::nationality}} and speak {{chas::Portuguese}}.",
+            numCards: 3,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from Brazil are called [nationality] and speak ....";
+                    case 1:
+                        return "People from Brazil are called ... and speak [...].";
+                    case 2:
+                        return "People from [country] are called Brazilians and speak Portuguese.";
+                }
+                throw new Error("Invalid card index.");
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return "People from Brazil are called Brazilians and speak ....";
+                    case 1:
+                        return "People from Brazil are called ... and speak Portuguese.";
+                    case 2:
+                        return "People from Brazil are called Brazilians and speak Portuguese.";
+                }
+                throw new Error("Invalid card index.");
+            }
         }
-    }
-];
+    ]
+};
 
 export const ClozeNoteMocks = {
     ankiLikeNotes

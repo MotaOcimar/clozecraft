@@ -18,7 +18,7 @@ the text does not contain any cloze deletion', () => {
 
 test('ClozeNoteInitializer SHOULD return a cloze note object WHEN \
 the text contains one or more cloze deletions', () => {
-    const text = ClozeNoteMocks.ankiLikeNotes[0].raw;
+    const text = ClozeNoteMocks.ankiLikeNotes.noteList[0].raw;
     const clozeNote = initializer.createClozeNoteFromText(text);
     expect(clozeNote).not.toBeNull();
 });

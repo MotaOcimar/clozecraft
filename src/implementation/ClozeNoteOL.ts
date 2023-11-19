@@ -33,7 +33,7 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
                     raw: match.raw,
                     answer: match.answer,
                     seq: match.seq,
-                    hint: match.answer
+                    hint: match.hint
                 };
 
                 deletions.push(newCloze);
@@ -72,14 +72,10 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
 
             switch (clozeAction) {
                 case "a":
-                    if (deletion.hint !== undefined) {
-                        frontText = frontText.replace(deletion.raw, format.hinting(deletion.hint)); // Hide asked cloze with hint
-                        break;
-                    }
-                    frontText = frontText.replace(deletion.raw, format.asking(deletion.answer)); // Hide asked cloze
+                    frontText = frontText.replace(deletion.raw, format.asking(deletion.answer, deletion.hint)); // Hide asked cloze
                     break;
                 case "h":
-                    frontText = frontText.replace(deletion.raw, format.hiding(deletion.answer)); // Just hide
+                    frontText = frontText.replace(deletion.raw, format.hiding(deletion.answer, deletion.hint)); // Just hide
                     break;
                 case "s":
                     frontText = frontText.replace(deletion.raw, deletion.answer); // Just show
@@ -112,10 +108,10 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
 
             switch (clozeAction) {
                 case "a":
-                    backText = backText.replace(deletion.raw, format.showing(deletion.answer)); // Show as answer
+                    backText = backText.replace(deletion.raw, format.showingAnswer(deletion.answer, deletion.hint)); // Show as answer
                     break;
                 case "h":
-                    backText = backText.replace(deletion.raw, format.hiding(deletion.answer)); // Just hide
+                    backText = backText.replace(deletion.raw, format.hiding(deletion.answer, deletion.hint)); // Just hide
                     break;
                 case "s":
                     backText = backText.replace(deletion.raw, deletion.answer); // Just show

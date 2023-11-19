@@ -1,6 +1,5 @@
 export interface IClozeFormat {
-    asking(text: string): string;
-    showing(text: string): string;
-    hinting(text: string): string;
-    hiding(text: string): string;
+    hiding(answer: string, hint: string): string;
+    asking(answer: string, hint: string): string;
+    showingAnswer(answer: string, hint: string): string;
 }

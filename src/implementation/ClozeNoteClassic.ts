@@ -66,12 +66,7 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
                 continue;
             }
 
-            if (deletion.hint !== undefined) {
-                frontText = frontText.replace(deletion.raw, format.hinting(deletion.hint) ); // Hide asked cloze with hint
-                continue
-            }
-
-            frontText = frontText.replace(deletion.raw, format.asking(deletion.answer)); // Hide asked cloze
+            frontText = frontText.replace(deletion.raw, format.asking(deletion.answer, deletion.hint)); // Hide asked cloze
         }
         return frontText;
     }
@@ -89,7 +84,7 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
         for (const deletion of this._clozeDeletions) {
 
             if (deletion.seq === cardIndex + 1) {
-                backText = backText.replace(deletion.raw, format.showing(deletion.answer)); // Show as answer
+                backText = backText.replace(deletion.raw, format.showingAnswer(deletion.answer, deletion.hint)); // Show as answer
             } else {
                 backText = backText.replace(deletion.raw, deletion.answer); // Just show
             }
