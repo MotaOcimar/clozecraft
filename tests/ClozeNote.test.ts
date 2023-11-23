@@ -1,13 +1,8 @@
 import { ClozePattern } from '../src/implementation/ClozePattern';
 import { ClozeNoteInitializer } from '../src/implementation/ClozeNoteInitializer';
-import { ClozePatternMocksStr } from './mocks/ClozePatternMocks';
 import { ClozeNoteMocks } from './mocks/ClozeNoteMocks';
 import { IClozeNote } from '../src/interfaces/IClozeNote';
 
-
-const clozePatternStrs = Object.values(ClozePatternMocksStr);
-const patterns = clozePatternStrs.map(str => new ClozePattern(str));
-const initializer = new ClozeNoteInitializer(patterns);
 
 const compareNotes = (noteA: IClozeNote, noteB: IClozeNote) => {
     expect(noteA.raw).toEqual(noteB.raw);
@@ -20,15 +15,19 @@ const compareNotes = (noteA: IClozeNote, noteB: IClozeNote) => {
     }
 }
 
-test('ClozeNote SHOULD have the correct properties WHEN \
-the text contains one or more cloze deletions', () => {
+test('ClozeNote SHOULD have the correct properties after creation', () => {
 
-    for (const mockNote of ClozeNoteMocks.ankiLikeNotes.noteList) {
-        const clozeNote = initializer.createClozeNoteFromText(mockNote.raw);
+    for ( const notesMock of ClozeNoteMocks ) {
+        const patterns = [new ClozePattern(notesMock.patternStr)];
+        const initializer = new ClozeNoteInitializer(patterns);
     
-        if (!clozeNote) {
-            throw new Error("Cloze note is null but it shouldn't be.");
+        for (const mockNote of notesMock.noteList) {
+            const clozeNote = initializer.createClozeNoteFromText(mockNote.raw);
+        
+            if (!clozeNote) {
+                throw new Error("Cloze note is null but it shouldn't be.");
+            }
+            compareNotes(clozeNote, mockNote);
         }
-        compareNotes(clozeNote, mockNote);
     }
 });
