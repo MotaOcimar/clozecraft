@@ -11,15 +11,17 @@ import { IClozeFormat } from "../interfaces/IClozeFormat";
 export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
     protected _clozeDeletions: ClozeDeletionOL[];
 
-    constructor(text: string, patterns: IClozePattern[]) {
-        super(text);
-        this._clozeType = ClozeTypeEnum.OVERLAPPING;
-        this.initParsing(text, patterns);
+    constructor(raw: string, patterns: IClozePattern[]) {
+        super(raw, patterns);
     }
 
-    protected initParsing(text: string, patterns: IClozePattern[]) {
+    get clozeType(): ClozeTypeEnum {
+        return ClozeTypeEnum.OVERLAPPING;
+    }
 
-        let deletions: ClozeDeletionOL[] = [];
+    protected initParsing(rawNote: string, patterns: IClozePattern[]): { clozeDeletions: ClozeDeletionOL[], numCards: number } {
+
+        let clozeDeletions: ClozeDeletionOL[] = [];
         let numCards = 0;
 
         patterns.forEach( (pattern) => {
@@ -27,7 +29,7 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
 
             let match: IClozeRegExpExecArray | null;
 
-            while (match = regex.exec(text)) {
+            while (match = regex.exec(rawNote)) {
 
                 let newCloze: ClozeDeletionOL = {
                     raw: match.raw,
@@ -36,7 +38,7 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
                     hint: match.hint
                 };
 
-                deletions.push(newCloze);
+                clozeDeletions.push(newCloze);
 
                 // Get the max seq length
                 if (numCards < newCloze.seq.length) {
@@ -45,8 +47,7 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
             }
         } )
 
-        this._clozeDeletions = deletions;
-        this._numCards = numCards;
+        return { clozeDeletions, numCards};
     }
 
     getCardFront(cardIndex: number, format?:IClozeFormat): string {

@@ -1,6 +1,7 @@
 import { IClozeDeletion } from "../interfaces/IClozeDeletion";
 import { IClozeFormat } from "../interfaces/IClozeFormat";
 import { IClozeNote } from "../interfaces/IClozeNote";
+import { IClozePattern } from "../interfaces/IClozePattern";
 import { ClozeTypeEnum } from "./ClozeTypeEnum";
 
 /**
@@ -13,22 +14,23 @@ export abstract class ClozeNoteDefault implements IClozeNote {
     protected _raw: string;
     protected _clozeDeletions: IClozeDeletion[];
     protected _numCards: number;
-    protected _clozeType: ClozeTypeEnum;
 
     /**
      * Creates a new ClozeNoteDefault instance.
      * 
      * @param raw The raw text of the cloze note before processing.
      */
-    constructor(raw: string) {
+    constructor(raw: string, patterns: IClozePattern[]) {
         this._raw = raw;
-        this._clozeDeletions = [];
-        this._numCards = 0;
+        
+        const { clozeDeletions, numCards } = this.initParsing(raw, patterns);
+        this._clozeDeletions = clozeDeletions;
+        this._numCards = numCards;
     }
 
-    get clozeType(): ClozeTypeEnum {
-        return this._clozeType;
-    }
+    abstract get clozeType(): ClozeTypeEnum;
+
+    protected abstract initParsing(rawNote: string, patterns: IClozePattern[]): { clozeDeletions: IClozeDeletion[], numCards: number };
 
     get raw(): string {
         return this._raw;

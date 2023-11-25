@@ -1,4 +1,3 @@
-import { ClozePattern } from '../src/implementation/ClozePattern';
 import { ClozeNoteInitializer } from '../src/implementation/ClozeNoteInitializer';
 import { ClozeNoteMocks } from './mocks/ClozeNoteMocks';
 import { IClozeNote } from '../src/interfaces/IClozeNote';
@@ -18,8 +17,7 @@ const compareNotes = (noteA: IClozeNote, noteB: IClozeNote) => {
 test('ClozeNote SHOULD have the correct properties after creation', () => {
 
     for ( const notesMock of ClozeNoteMocks ) {
-        const patterns = [new ClozePattern(notesMock.patternStr)];
-        const initializer = new ClozeNoteInitializer(patterns);
+        const initializer = new ClozeNoteInitializer( [notesMock.patternStr] );
     
         for (const mockNote of notesMock.noteList) {
             const clozeNote = initializer.createClozeNoteFromText(mockNote.raw);
