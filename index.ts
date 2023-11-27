@@ -1,12 +1,9 @@
-import { ClozeNoteClassic } from "./src/implementation/ClozeNoteClassic"
-import { ClozeNoteSimple } from "./src/implementation/ClozeNoteSimple"
-import { ClozeNoteOL } from "./src/implementation/ClozeNoteOL"
-import { ClozePattern } from "./src/implementation/ClozePattern"
+import { ClozeCrafter } from "./src/implementation/ClozeCrafter"
+import { ClozeTypeEnum, ClozeTypesPriority } from "./src/implementation/ClozeTypeEnum"
 
 
 export {
-    ClozeNoteClassic,
-    ClozeNoteSimple,
-    ClozeNoteOL,
-    ClozePattern
+    ClozeCrafter,
+    ClozeTypeEnum,
+    ClozeTypesPriority
 }

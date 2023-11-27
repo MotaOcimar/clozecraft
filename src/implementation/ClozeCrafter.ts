@@ -3,14 +3,14 @@ import { IClozePattern } from '../interfaces/IClozePattern';
 import { ClozePattern } from './ClozePattern';
 import { NoteClassByClozeType, ClozeTypeEnum, ClozeTypesPriority } from './ClozeTypeEnum';
 
-export class ClozeNoteInitializer {
+export class ClozeCrafter {
     private patterns: IClozePattern[];
 
     constructor(patterns: string[]) {
         this.patterns = patterns.map( patternStr => new ClozePattern(patternStr) );
     }
 
-    public createClozeNoteFromText(text: string): IClozeNote | null {
+    public createClozeNote(text: string): IClozeNote | null {
 
         let noteType: ClozeTypeEnum | null = null;
 
