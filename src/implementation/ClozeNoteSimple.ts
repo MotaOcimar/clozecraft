@@ -7,15 +7,18 @@ import { ClozeTypeEnum } from "./ClozeTypeEnum";
 export class ClozeNoteSimple extends ClozeNoteClassic {
     protected _clozeDeletions: ClozeDeletionSimple[];
 
-    constructor(text: string, patterns: IClozePattern[]) {
-        super(text, patterns);
-        this._clozeType = ClozeTypeEnum.SIMPLE;
+    constructor(raw: string, patterns: IClozePattern[]) {
+        super(raw, patterns);
+    }
+
+    get clozeType(): ClozeTypeEnum {
+        return ClozeTypeEnum.SIMPLE;
     }
 
     // Override
-    protected initParsing(text: string, patterns: IClozePattern[]) {
+    protected initParsing(rawNote: string, patterns: IClozePattern[]): { clozeDeletions: ClozeDeletionSimple[], numCards: number } {
 
-        let clozes: ClozeDeletionSimple[] = [];
+        let clozeDeletions: ClozeDeletionSimple[] = [];
         let numCards = 0;
 
         patterns.forEach( (pattern) => {
@@ -23,22 +26,21 @@ export class ClozeNoteSimple extends ClozeNoteClassic {
 
             let match: IClozeRegExpExecArray | null;
 
-            while (match = regex.exec(text)) {
+            while (match = regex.exec(rawNote)) {
 
                 numCards++;
 
                 let newCloze: ClozeDeletionSimple = {
-                    raw: match[0],
+                    raw: match.raw,
                     answer: match.answer,
                     seq: numCards,
                     hint: match.hint
                 }
 
-                clozes.push(newCloze);
+                clozeDeletions.push(newCloze);
             }
         } )
 
-        this._clozeDeletions = clozes;
-        this._numCards = numCards;
+        return { clozeDeletions, numCards};
     }
 }

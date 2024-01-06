@@ -1,15 +1,16 @@
 import { IClozeNote } from '../interfaces/IClozeNote';
 import { IClozePattern } from '../interfaces/IClozePattern';
-import { ClassMapByClozeType as ClassByClozeType, ClozeTypeEnum, ClozeTypesPriority } from './ClozeTypeEnum';
+import { ClozePattern } from './ClozePattern';
+import { NoteClassByClozeType, ClozeTypeEnum, ClozeTypesPriority } from './ClozeTypeEnum';
 
-export class ClozeNoteInitializer {
+export class ClozeCrafter {
     private patterns: IClozePattern[];
 
-    constructor(patterns: IClozePattern[]) {
-        this.patterns = patterns;
+    constructor(patterns: string[]) {
+        this.patterns = patterns.map( patternStr => new ClozePattern(patternStr) );
     }
 
-    public createClozeNoteFromText(text: string): IClozeNote | null {
+    public createClozeNote(text: string): IClozeNote | null {
 
         let noteType: ClozeTypeEnum | null = null;
 
@@ -27,7 +28,7 @@ export class ClozeNoteInitializer {
             return null;
         }
 
-        const selectedClass = ClassByClozeType[noteType];
+        const selectedClass = NoteClassByClozeType[noteType];
         const clozeNote = new selectedClass(text, this.patterns);
 
         return clozeNote;

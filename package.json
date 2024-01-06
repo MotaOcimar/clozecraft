@@ -1,7 +1,7 @@
 {
-  "name": "osr-clozes",
+  "name": "clozecraft",
   "version": "1.0.0",
-  "description": "A library to generate cloze cards from a note and a simply defined pattern",
+  "description": "A customizable and flexible flashcard generation solution, specifically designed for Cloze Deletions in spaced repetition platforms. Tailor visually appealing study notes with personalized formatting options such as Markdown bold, highligh, and more",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -17,19 +17,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MotaOcimar/OSR-Clozes.git"
+    "url": "git+https://github.com/MotaOcimar/clozecraft.git"
   },
   "keywords": [
     "cloze",
     "deletion",
-    "anki",
-    "cards",
-    "flashcards"
+    "flashcards",
+    "spaced-repetition"
   ],
   "author": "Ocimar Santos",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MotaOcimar/OSR-Clozes/issues"
+    "url": "https://github.com/MotaOcimar/clozecraft/issues"
   },
-  "homepage": "https://github.com/MotaOcimar/OSR-Clozes#readme"
+  "homepage": "https://github.com/MotaOcimar/clozecraft#readme"
 }

@@ -3,39 +3,42 @@ import { IClozeNote } from "../interfaces/IClozeNote";
 import { ClozeNoteDefault } from "./ClozeNoteDefault";
 import { IClozePattern } from "../interfaces/IClozePattern";
 import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
-import { format } from "./utils";
+import { simpleFormat } from "./utils";
 import { ClozeTypeEnum } from "./ClozeTypeEnum";
+import { IClozeFormat } from "../interfaces/IClozeFormat";
 
 
 export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
     protected _clozeDeletions: ClozeDeletionClassic[];
 
-    constructor(text: string, patterns: IClozePattern[]) {
-        super(text);
-        this._clozeType = ClozeTypeEnum.CLASSIC;
-        this.initParsing(text, patterns);
+    constructor(raw: string, patterns: IClozePattern[]) {
+        super(raw, patterns);
     }
 
-    protected initParsing(text: string, patterns: IClozePattern[]): void {
+    get clozeType(): ClozeTypeEnum {
+        return ClozeTypeEnum.CLASSIC;
+    }
 
-        let clozes: ClozeDeletionClassic[] = [];
-        let numCards = 0
+    protected initParsing(rawNote: string, patterns: IClozePattern[]): { clozeDeletions: ClozeDeletionClassic[], numCards: number } {
+
+        let clozeDeletions: ClozeDeletionClassic[] = [];
+        let numCards = 0;
 
         patterns.forEach( (pattern) => {
-            const regex = pattern.getClozeRegex(ClozeTypeEnum.CLASSIC)
+            const regex = pattern.getClozeRegex(ClozeTypeEnum.CLASSIC);
 
             let match: IClozeRegExpExecArray | null;
 
-            while (match = regex.exec(text)) {
+            while (match = regex.exec(rawNote)) {
 
                 let newCloze: ClozeDeletionClassic = {
-                    raw: match[0],
+                    raw: match.raw,
                     answer: match.answer,
                     seq: parseInt(match.seq),
                     hint: match.hint
-                }
+                };
 
-                clozes.push(newCloze);
+                clozeDeletions.push(newCloze);
 
                 // Get the max seq
                 if (numCards < newCloze.seq) {
@@ -44,45 +47,47 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
             }
         } )
 
-        this._clozeDeletions = clozes;
-        this._numCards = numCards;
+        return { clozeDeletions, numCards }
     }
 
-    getCardFront(cardIndex: number): string {
-        if (cardIndex > this._numCards || cardIndex < 1) {
+    getCardFront(cardIndex: number, format?: IClozeFormat): string {
+        if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        let frontText = this.raw;
-        for (const cloze of this._clozeDeletions) {
+        if (!format) {
+            format = new simpleFormat();
+        }
 
-            if (cloze.seq !== cardIndex) {
-                frontText = frontText.replace(cloze.raw, cloze.answer); // Just show
+        let frontText = this.raw;
+        for (const deletion of this._clozeDeletions) {
+
+            if (deletion.seq !== cardIndex + 1) {
+                frontText = frontText.replace(deletion.raw, deletion.answer); // Just show
                 continue;
             }
 
-            if (cloze.hint !== undefined) {
-                frontText = frontText.replace(cloze.raw, format.asking(`[${cloze.hint}]`) ); // Hide asked cloze with hint
-                continue
-            }
-
-            frontText = frontText.replace(cloze.raw, format.asking(`[...]`)); // Hide asked cloze
+            frontText = frontText.replace(deletion.raw, format.asking(deletion.answer, deletion.hint)); // Hide asked cloze
         }
         return frontText;
     }
 
-    getCardBack(cardIndex: number): string {
-        if (cardIndex > this._numCards || cardIndex < 1) {
+    getCardBack(cardIndex: number, format?:IClozeFormat): string {
+        if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        let backText = this.raw;
-        for (const cloze of this._clozeDeletions) {
+        if (!format) {
+            format = new simpleFormat();
+        }
 
-            if (cloze.seq === cardIndex) {
-                backText = backText.replace(cloze.raw, format.showing(cloze.answer)); // Show as answer
+        let backText = this.raw;
+        for (const deletion of this._clozeDeletions) {
+
+            if (deletion.seq === cardIndex + 1) {
+                backText = backText.replace(deletion.raw, format.showingAnswer(deletion.answer, deletion.hint)); // Show as answer
             } else {
-                backText = backText.replace(cloze.raw, cloze.answer); // Just show
+                backText = backText.replace(deletion.raw, deletion.answer); // Just show
             }
         }
         return backText;

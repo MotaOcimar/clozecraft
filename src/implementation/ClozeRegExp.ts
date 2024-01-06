@@ -13,9 +13,8 @@ export class ClozeRegExp implements IClozeRegExp {
 
     exec(str: string): IClozeRegExpExecArray | null {
 
-        let ans = this.regex.exec(str) as IClozeRegExpExecArray;
-        
-        if (!ans) {
+        let match = this.regex.exec(str) as IClozeRegExpExecArray;
+        if (!match) {
             return null;
         }
 
@@ -29,16 +28,16 @@ export class ClozeRegExp implements IClozeRegExp {
 
         // But cloze simple doesn't have cloze seq
         if (this.clozeOrder.indexOf(ClozeFieldEnum.seq) == -1) {
-            ans.seq = null;
+            match.seq = null;
         } else {
-            ans.seq = ans[this.clozeOrder.indexOf(ClozeFieldEnum.seq) + 1];
+            match.seq = match[this.clozeOrder.indexOf(ClozeFieldEnum.seq) + 1];
         }
 
-        ans.raw = ans[0];
-        ans.answer = ans[this.clozeOrder.indexOf(ClozeFieldEnum.answer) + 1];
-        ans.hint = ans[this.clozeOrder.indexOf(ClozeFieldEnum.hint) + 1];
+        match.raw = match[0];
+        match.answer = match[this.clozeOrder.indexOf(ClozeFieldEnum.answer) + 1];
+        match.hint = match[this.clozeOrder.indexOf(ClozeFieldEnum.hint) + 1];
 
-        return ans;
+        return match;
     }
 
     test(str: string): boolean {

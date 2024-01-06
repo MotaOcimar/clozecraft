@@ -6,7 +6,7 @@ import { IClozePattern } from "../interfaces/IClozePattern";
 
 export enum ClozeTypeEnum {
     CLASSIC = "classic",
-    OVERLAPPING = "overLapping",
+    OVERLAPPING = "overlapping",
     SIMPLE = "simple"
 }
 
@@ -16,7 +16,7 @@ export const ClozeTypesPriority = [
     ClozeTypeEnum.SIMPLE, // Cloze Simple must be the last one because it is a subset of Cloze Classic and Cloze Overlapping
 ];
 
-export const ClassMapByClozeType: { [key in ClozeTypeEnum]: new (text: string, patterns: IClozePattern[]) => IClozeNote } = {
+export const NoteClassByClozeType: { [key in ClozeTypeEnum]: new (text: string, patterns: IClozePattern[]) => IClozeNote } = {
     [ClozeTypeEnum.CLASSIC]: ClozeNoteClassic,
     [ClozeTypeEnum.OVERLAPPING]: ClozeNoteOL,
     [ClozeTypeEnum.SIMPLE]: ClozeNoteSimple,
