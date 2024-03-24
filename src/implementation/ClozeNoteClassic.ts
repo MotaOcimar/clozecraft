@@ -1,6 +1,5 @@
 import { ClozeDeletionClassic } from "./ClozeDeletionClassic";
-import { IClozeNote } from "../interfaces/IClozeNote";
-import { ClozeNoteDefault } from "./ClozeNoteDefault";
+import { ClozeNote } from "./ClozeNote";
 import { IClozePattern } from "../interfaces/IClozePattern";
 import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
 import { simpleFormat } from "./utils";
@@ -8,8 +7,7 @@ import { ClozeTypeEnum } from "./ClozeTypeEnum";
 import { IClozeFormat } from "../interfaces/IClozeFormat";
 
 
-export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
-    protected _clozeDeletions: ClozeDeletionClassic[];
+export class ClozeNoteClassic extends ClozeNote<ClozeDeletionClassic> {
 
     constructor(raw: string, patterns: IClozePattern[]) {
         super(raw, patterns);
@@ -24,12 +22,15 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
         let clozeDeletions: ClozeDeletionClassic[] = [];
         let numCards = 0;
 
-        patterns.forEach( (pattern) => {
+        patterns.forEach((pattern) => {
             const regex = pattern.getClozeRegex(ClozeTypeEnum.CLASSIC);
 
             let match: IClozeRegExpExecArray | null;
 
             while (match = regex.exec(rawNote)) {
+                if (!match.seq) {
+                    break;
+                }
 
                 let newCloze: ClozeDeletionClassic = {
                     raw: match.raw,
@@ -45,9 +46,9 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
                     numCards = newCloze.seq;
                 }
             }
-        } )
+        });
 
-        return { clozeDeletions, numCards }
+        return { clozeDeletions, numCards };
     }
 
     getCardFront(cardIndex: number, format?: IClozeFormat): string {
@@ -72,7 +73,7 @@ export class ClozeNoteClassic extends ClozeNoteDefault implements IClozeNote  {
         return frontText;
     }
 
-    getCardBack(cardIndex: number, format?:IClozeFormat): string {
+    getCardBack(cardIndex: number, format?: IClozeFormat): string {
         if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }

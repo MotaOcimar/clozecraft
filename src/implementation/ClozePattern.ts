@@ -10,7 +10,7 @@ const answerKeyword = `answer` // Must not have regex special characters
 
 export class ClozePattern implements IClozePattern {
     private readonly _raw: string;
-    
+
     private readonly numPattern: RegExpExecArray;
     private readonly hintPattern: RegExpExecArray;
 
@@ -20,32 +20,32 @@ export class ClozePattern implements IClozePattern {
 
     private readonly _clozeFieldOrder: ClozeFieldEnum[];
 
-    private clozeRegexByType: { [key in ClozeTypeEnum]: ClozeRegExp } = {
+    private clozeRegexByType: { [key in ClozeTypeEnum]: ClozeRegExp | undefined } = {
         [ClozeTypeEnum.CLASSIC]: undefined,
         [ClozeTypeEnum.OVERLAPPING]: undefined,
         [ClozeTypeEnum.SIMPLE]: undefined,
     };
 
-    private generateClozeRegexByType: { [key in ClozeTypeEnum]: (ClozePattern) => ClozeRegExp } = {
+    private generateClozeRegexByType: { [key in ClozeTypeEnum]: (arg0: ClozePattern) => ClozeRegExp } = {
         [ClozeTypeEnum.CLASSIC]: this.generateClozeClassicRegex,
         [ClozeTypeEnum.OVERLAPPING]: this.generateClozeOLRegex,
         [ClozeTypeEnum.SIMPLE]: this.generateClozeSimpleRegex,
     };
 
-    constructor(raw: string){
+    constructor(raw: string) {
         this._raw = raw;
-    
-        let _numMatch = numPatternRegex.exec(raw)
-        let _hintMatch = hintPatternRegex.exec(raw)
-    
-        if (!_numMatch){
-            throw new Error("No cloze number pattern found")
+
+        let _numMatch = numPatternRegex.exec(raw);
+        let _hintMatch = hintPatternRegex.exec(raw);
+
+        if (!_numMatch) {
+            throw new Error("No cloze number pattern found");
         }
-        if (!_hintMatch){
-            throw new Error("No cloze hint pattern found")
+        if (!_hintMatch) {
+            throw new Error("No cloze hint pattern found");
         }
-        if (raw.indexOf(answerKeyword) == -1){
-            throw new Error(`No answer keyword (${answerKeyword}) found in the pattern.`)
+        if (raw.indexOf(answerKeyword) == -1) {
+            throw new Error(`No answer keyword (${answerKeyword}) found in the pattern.`);
         }
 
         this.numPattern = _numMatch;
@@ -67,7 +67,7 @@ export class ClozePattern implements IClozePattern {
         this._clozeFieldOrder.sort((a, b) => positions[a] - positions[b]);
     }
 
-    private static processPattern(text: string, rplc: Function): string{
+    private static processPattern(text: string, rplc: Function): string {
         let ans = text.substring(1, text.length - 1);
         ans = ans.replace(/\\\[/g, "[").replace(/\\]/g, "]");
         ans = escapeRegexString(ans);
@@ -79,15 +79,15 @@ export class ClozePattern implements IClozePattern {
         let begin = this._raw.slice(0, first.index);
         let middle = this._raw.slice(first.index + first[0].length, second.index);
         let ending = this._raw.slice(second.index + second[0].length, this._raw.length);
-    
-        let regexStr = escapeRegexString(begin) + 
+
+        let regexStr = escapeRegexString(begin) +
             firstReplace +
             escapeRegexString(middle) +
             secondReplace +
             escapeRegexString(ending);
-    
+
         regexStr = regexStr.replace(answerKeyword, "(.+?)"); // answerKeyword must not have regex special characters
-    
+
         return regexStr;
     }
 
@@ -100,8 +100,8 @@ export class ClozePattern implements IClozePattern {
             regexStr = pattern.generateClozeRegexStr(pattern.hintPattern, pattern.hintRegex, pattern.numPattern, "");
         }
 
-        let clozeOrderWithoutSeq = pattern._clozeFieldOrder.filter((x) => x != ClozeFieldEnum.seq);
-        return new ClozeRegExp(regexStr, clozeOrderWithoutSeq, 'g');
+        let clozeFieldsOrderWithoutSeq = pattern._clozeFieldOrder.filter((x) => x != ClozeFieldEnum.seq);
+        return new ClozeRegExp(regexStr, clozeFieldsOrderWithoutSeq, 'g');
     }
 
     private generateClozeClassicRegex(pattern: ClozePattern): ClozeRegExp {
@@ -124,7 +124,7 @@ export class ClozePattern implements IClozePattern {
         } else {
             regexStr = pattern.generateClozeRegexStr(pattern.hintPattern, pattern.hintRegex, pattern.numPattern, pattern.seqRegex);
         }
-        
+
         return new ClozeRegExp(regexStr, pattern._clozeFieldOrder, 'g');
     }
 
@@ -133,13 +133,14 @@ export class ClozePattern implements IClozePattern {
     }
 
     getClozeRegex(clozeType: ClozeTypeEnum): ClozeRegExp {
-        if (this.clozeRegexByType[clozeType] != undefined){
-            const clozeRegex = this.clozeRegexByType[clozeType];
+        let clozeRegex = this.clozeRegexByType[clozeType];
+
+        if (clozeRegex != undefined) {
             clozeRegex.regex.lastIndex = 0; // Reset the regex
             return clozeRegex;
         }
 
-        const clozeRegex = this.generateClozeRegexByType[clozeType](this);
+        clozeRegex = this.generateClozeRegexByType[clozeType](this);
         this.clozeRegexByType[clozeType] = clozeRegex;
         return clozeRegex;
     }

@@ -5,18 +5,18 @@ import { IClozePattern } from "../interfaces/IClozePattern";
 import { ClozeTypeEnum } from "./ClozeTypeEnum";
 
 /**
- * Class ClozeNoteDefault
+ * Class ClozeNote
  * 
  * This class is not meant to be used directly. It serves as a base implementation
  * for common methods used in other implementations of ClozeNote.
  */
-export abstract class ClozeNoteDefault implements IClozeNote {
+export abstract class ClozeNote<T extends IClozeDeletion> implements IClozeNote {
     protected _raw: string;
-    protected _clozeDeletions: IClozeDeletion[];
+    protected _clozeDeletions: T[];
     protected _numCards: number;
 
     /**
-     * Creates a new ClozeNoteDefault instance.
+     * Creates a new ClozeNote instance.
      * 
      * @param raw The raw text of the cloze note before processing.
      */
@@ -30,7 +30,7 @@ export abstract class ClozeNoteDefault implements IClozeNote {
 
     abstract get clozeType(): ClozeTypeEnum;
 
-    protected abstract initParsing(rawNote: string, patterns: IClozePattern[]): { clozeDeletions: IClozeDeletion[], numCards: number };
+    protected abstract initParsing(rawNote: string, patterns: IClozePattern[]): { clozeDeletions: T[], numCards: number };
 
     get raw(): string {
         return this._raw;

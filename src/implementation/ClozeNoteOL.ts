@@ -1,6 +1,5 @@
 import { ClozeDeletionOL } from "./ClozeDeletionOL";
-import { IClozeNote } from "../interfaces/IClozeNote";
-import { ClozeNoteDefault } from "./ClozeNoteDefault";
+import { ClozeNote } from "./ClozeNote";
 import { IClozePattern } from "../interfaces/IClozePattern";
 import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
 import { simpleFormat } from "./utils";
@@ -8,8 +7,7 @@ import { ClozeTypeEnum } from "./ClozeTypeEnum";
 import { IClozeFormat } from "../interfaces/IClozeFormat";
 
 
-export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
-    protected _clozeDeletions: ClozeDeletionOL[];
+export class ClozeNoteOL extends ClozeNote<ClozeDeletionOL> {
 
     constructor(raw: string, patterns: IClozePattern[]) {
         super(raw, patterns);
@@ -24,12 +22,15 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
         let clozeDeletions: ClozeDeletionOL[] = [];
         let numCards = 0;
 
-        patterns.forEach( (pattern) => {
+        patterns.forEach((pattern) => {
             const regex = pattern.getClozeRegex(ClozeTypeEnum.OVERLAPPING)
 
             let match: IClozeRegExpExecArray | null;
 
             while (match = regex.exec(rawNote)) {
+                if (!match.seq) {
+                    break;
+                }
 
                 let newCloze: ClozeDeletionOL = {
                     raw: match.raw,
@@ -45,12 +46,12 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
                     numCards = newCloze.seq.length;
                 }
             }
-        } )
+        });
 
-        return { clozeDeletions, numCards};
+        return { clozeDeletions, numCards };
     }
 
-    getCardFront(cardIndex: number, format?:IClozeFormat): string {
+    getCardFront(cardIndex: number, format?: IClozeFormat): string {
         if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
@@ -67,7 +68,7 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
             let clozeAction = "s";
-            if ( cardIndex < deletion.seq.length ) {
+            if (cardIndex < deletion.seq.length) {
                 clozeAction = deletion.seq[cardIndex];
             }
 
@@ -86,7 +87,7 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
         return frontText;
     }
 
-    getCardBack(cardIndex: number, format?:IClozeFormat): string {
+    getCardBack(cardIndex: number, format?: IClozeFormat): string {
         if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
@@ -103,7 +104,7 @@ export class ClozeNoteOL extends ClozeNoteDefault implements IClozeNote {
             // Example:             "This is a ==cloze1==^[a] ==cloze2==^[sha] ==cloze3==^[ha]"
             // Will be the same as: "This is a ==cloze1==^[ass] ==cloze2==^[sha] ==cloze3==^[has]"
             let clozeAction = "s";
-            if ( cardIndex < deletion.seq.length ) {
+            if (cardIndex < deletion.seq.length) {
                 clozeAction = deletion.seq[cardIndex];
             }
 
