@@ -1,6 +1,6 @@
 {
   "name": "clozecraft",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A customizable and flexible flashcard generation solution, specifically designed for Cloze Deletions in spaced repetition platforms. Tailor visually appealing study notes with personalized formatting options such as Markdown bold, highligh, and more",
   "main": "index.js",
   "directories": {
@@ -25,8 +25,8 @@
     "flashcards",
     "spaced-repetition"
   ],
-  "author": "Ocimar Santos",
-  "license": "ISC",
+  "author": "Ocimar Santos (MotaOcimar)",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/MotaOcimar/clozecraft/issues"
   },
