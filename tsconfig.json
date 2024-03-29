@@ -1,9 +1,12 @@
 {
     "compilerOptions": {
-        "target": "ES5",
+        "target": "ES2020",
+        "module": "commonjs",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "declaration": true,
+        "esModuleInterop": true
     },
-    "include": [
-        "*.ts",
-        "src/implementation/*.ts",
-    ]
+    "include": ["src"],
+    "exclude": ["node_modules"]
 }
