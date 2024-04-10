@@ -12,6 +12,18 @@ export class ClozeCrafter {
 
     public createClozeNote(text: string): IClozeNote | null {
 
+        const noteType = this.getNoteType(text);
+        if (noteType === null) {
+            return null;
+        }
+        
+        const selectedClass = NoteClassByClozeType[noteType];
+        const clozeNote = new selectedClass(text, this.patterns);
+
+        return clozeNote;
+    }
+
+    public getNoteType(text: string): ClozeTypeEnum | null {
         let noteType: ClozeTypeEnum | null = null;
 
         for (const pattern of this.patterns) {
@@ -24,13 +36,10 @@ export class ClozeCrafter {
             }
         }
 
-        if (noteType === null) {
-            return null;
-        }
+        return noteType;
+    }
 
-        const selectedClass = NoteClassByClozeType[noteType];
-        const clozeNote = new selectedClass(text, this.patterns);
-
-        return clozeNote;
+    public isClozeNote(text: string): boolean {
+        return this.getNoteType(text) !== null;
     }
 }
