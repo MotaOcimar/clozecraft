@@ -2,9 +2,9 @@ import { ClozeDeletionClassic } from "./ClozeDeletionClassic";
 import { ClozeNote } from "./ClozeNote";
 import { IClozePattern } from "../interfaces/IClozePattern";
 import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
-import { simpleFormat } from "./utils";
+import { simpleFormatter } from "./utils";
 import { ClozeTypeEnum } from "./ClozeTypeEnum";
-import { IClozeFormat } from "../interfaces/IClozeFormat";
+import { IClozeFormatter } from "../interfaces/IClozeFormatter";
 
 
 export class ClozeNoteClassic extends ClozeNote<ClozeDeletionClassic> {
@@ -51,13 +51,13 @@ export class ClozeNoteClassic extends ClozeNote<ClozeDeletionClassic> {
         return { clozeDeletions, numCards };
     }
 
-    getCardFront(cardIndex: number, format?: IClozeFormat): string {
+    getCardFront(cardIndex: number, formatter?: IClozeFormatter): string {
         if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        if (!format) {
-            format = new simpleFormat();
+        if (!formatter) {
+            formatter = new simpleFormatter();
         }
 
         let frontText = this.raw;
@@ -68,25 +68,25 @@ export class ClozeNoteClassic extends ClozeNote<ClozeDeletionClassic> {
                 continue;
             }
 
-            frontText = frontText.replace(deletion.raw, format.asking(deletion.answer, deletion.hint)); // Hide asked cloze
+            frontText = frontText.replace(deletion.raw, formatter.asking(deletion.answer, deletion.hint)); // Hide asked cloze
         }
         return frontText;
     }
 
-    getCardBack(cardIndex: number, format?: IClozeFormat): string {
+    getCardBack(cardIndex: number, formatter?: IClozeFormatter): string {
         if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        if (!format) {
-            format = new simpleFormat();
+        if (!formatter) {
+            formatter = new simpleFormatter();
         }
 
         let backText = this.raw;
         for (const deletion of this._clozeDeletions) {
 
             if (deletion.seq === cardIndex + 1) {
-                backText = backText.replace(deletion.raw, format.showingAnswer(deletion.answer, deletion.hint)); // Show as answer
+                backText = backText.replace(deletion.raw, formatter.showingAnswer(deletion.answer, deletion.hint)); // Show as answer
             } else {
                 backText = backText.replace(deletion.raw, deletion.answer); // Just show
             }

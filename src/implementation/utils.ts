@@ -1,10 +1,10 @@
-import { IClozeFormat } from "../interfaces/IClozeFormat";
+import { IClozeFormatter } from "../interfaces/IClozeFormatter";
 
 export function escapeRegexString(str: string) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-export class htmlFormat implements IClozeFormat {
+export class htmlFormatter implements IClozeFormatter {
     asking(answer: string, hint: string): string {
         return `<span style='color:#2196f3'>${!hint ? '[...]' : `[${hint}]`}</span>`;
     };
@@ -16,7 +16,7 @@ export class htmlFormat implements IClozeFormat {
     };
 }
 
-export class simpleFormat implements IClozeFormat {
+export class simpleFormatter implements IClozeFormatter {
     asking(answer: string, hint: string): string {
         return `${!hint ? '[...]' : `[${hint}]`}`;
     };

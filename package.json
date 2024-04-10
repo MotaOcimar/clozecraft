@@ -1,6 +1,6 @@
 {
   "name": "clozecraft",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A customizable and flexible flashcard generation solution, specifically designed for Cloze Deletions in spaced repetition platforms. Tailor visually appealing study notes with personalized formatting options such as Markdown bold, highligh, and more",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

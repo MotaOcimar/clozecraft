@@ -1,5 +1,5 @@
 import { ClozeTypeEnum } from "../implementation/ClozeTypeEnum";
-import { IClozeFormat } from "./IClozeFormat";
+import { IClozeFormatter } from "./IClozeFormatter";
 
 /**
  * Represents a complete text with one or more cloze deletions
@@ -66,7 +66,7 @@ export interface IClozeNote {
      * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
      * console.log(clozeNote.getFront(0)) // People from [country] are called Brazilians.
      */
-    getCardFront(cardIndex: number, format?: IClozeFormat): string;
+    getCardFront(cardIndex: number, formatter?: IClozeFormatter): string;
     
     /**
      * @param {number} cardIndex The index of the card (starting at 0).
@@ -76,5 +76,5 @@ export interface IClozeNote {
      * console.log(clozeNote.raw) // "People from {{c1::Brazil::country}} are called {{c2::Brazilians::nationality}}."
      * console.log(clozeNote.getBack(0)) // People from Brazil are called Brazilians.
      */
-    getCardBack(cardIndex: number, format?:IClozeFormat): string;
+    getCardBack(cardIndex: number, formatter?:IClozeFormatter): string;
 }

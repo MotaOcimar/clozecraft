@@ -2,9 +2,9 @@ import { ClozeDeletionOL } from "./ClozeDeletionOL";
 import { ClozeNote } from "./ClozeNote";
 import { IClozePattern } from "../interfaces/IClozePattern";
 import { IClozeRegExpExecArray } from "../interfaces/IClozeRegExpExecArray";
-import { simpleFormat } from "./utils";
+import { simpleFormatter } from "./utils";
 import { ClozeTypeEnum } from "./ClozeTypeEnum";
-import { IClozeFormat } from "../interfaces/IClozeFormat";
+import { IClozeFormatter } from "../interfaces/IClozeFormatter";
 
 
 export class ClozeNoteOL extends ClozeNote<ClozeDeletionOL> {
@@ -51,13 +51,13 @@ export class ClozeNoteOL extends ClozeNote<ClozeDeletionOL> {
         return { clozeDeletions, numCards };
     }
 
-    getCardFront(cardIndex: number, format?: IClozeFormat): string {
+    getCardFront(cardIndex: number, formatter?: IClozeFormatter): string {
         if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        if (!format) {
-            format = new simpleFormat();
+        if (!formatter) {
+            formatter = new simpleFormatter();
         }
 
         let frontText = this.raw;
@@ -74,10 +74,10 @@ export class ClozeNoteOL extends ClozeNote<ClozeDeletionOL> {
 
             switch (clozeAction) {
                 case "a":
-                    frontText = frontText.replace(deletion.raw, format.asking(deletion.answer, deletion.hint)); // Hide asked cloze
+                    frontText = frontText.replace(deletion.raw, formatter.asking(deletion.answer, deletion.hint)); // Hide asked cloze
                     break;
                 case "h":
-                    frontText = frontText.replace(deletion.raw, format.hiding(deletion.answer, deletion.hint)); // Just hide
+                    frontText = frontText.replace(deletion.raw, formatter.hiding(deletion.answer, deletion.hint)); // Just hide
                     break;
                 case "s":
                     frontText = frontText.replace(deletion.raw, deletion.answer); // Just show
@@ -87,13 +87,13 @@ export class ClozeNoteOL extends ClozeNote<ClozeDeletionOL> {
         return frontText;
     }
 
-    getCardBack(cardIndex: number, format?: IClozeFormat): string {
+    getCardBack(cardIndex: number, formatter?: IClozeFormatter): string {
         if (cardIndex >= this._numCards || cardIndex < 0) {
             throw new Error(`Card ${cardIndex} does not exist`);
         }
 
-        if (!format) {
-            format = new simpleFormat();
+        if (!formatter) {
+            formatter = new simpleFormatter();
         }
 
         let backText = this.raw;
@@ -110,10 +110,10 @@ export class ClozeNoteOL extends ClozeNote<ClozeDeletionOL> {
 
             switch (clozeAction) {
                 case "a":
-                    backText = backText.replace(deletion.raw, format.showingAnswer(deletion.answer, deletion.hint)); // Show as answer
+                    backText = backText.replace(deletion.raw, formatter.showingAnswer(deletion.answer, deletion.hint)); // Show as answer
                     break;
                 case "h":
-                    backText = backText.replace(deletion.raw, format.hiding(deletion.answer, deletion.hint)); // Just hide
+                    backText = backText.replace(deletion.raw, formatter.hiding(deletion.answer, deletion.hint)); // Just hide
                     break;
                 case "s":
                     backText = backText.replace(deletion.raw, deletion.answer); // Just show

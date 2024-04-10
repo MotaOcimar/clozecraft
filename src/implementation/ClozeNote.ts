@@ -1,5 +1,5 @@
 import { IClozeDeletion } from "../interfaces/IClozeDeletion";
-import { IClozeFormat } from "../interfaces/IClozeFormat";
+import { IClozeFormatter } from "../interfaces/IClozeFormatter";
 import { IClozeNote } from "../interfaces/IClozeNote";
 import { IClozePattern } from "../interfaces/IClozePattern";
 import { ClozeTypeEnum } from "./ClozeTypeEnum";
@@ -40,6 +40,6 @@ export abstract class ClozeNote<T extends IClozeDeletion> implements IClozeNote 
         return this._numCards;
     }
 
-    abstract getCardFront(cardIndex: number, format?:IClozeFormat): string;
-    abstract getCardBack(cardIndex: number, format?:IClozeFormat): string;
+    abstract getCardFront(cardIndex: number, formatter?:IClozeFormatter): string;
+    abstract getCardBack(cardIndex: number, formatter?:IClozeFormatter): string;
 }
