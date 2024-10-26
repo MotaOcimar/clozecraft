@@ -1,6 +1,6 @@
-# ClozeCraft
+# Clozecraft
 
-ClozeCraft is a library for creating cloze deletion flashcards from text. It seeks to be a simple, easy to use, and flexible tool for creating flashcards from text.
+Clozecraft is a package that aims to creat cloze deletion flashcards from text. It seeks to be simple, easy to use, and flexible.
 
 ## Usage Example
 
