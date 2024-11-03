@@ -4,9 +4,10 @@ import { IClozePattern } from "../interfaces/IClozePattern";
 import { ClozeFieldEnum } from "./ClozeFieldEnum";
 import { ClozeTypeEnum, ClozeTypesPriority } from "./ClozeTypeEnum";
 
-const numPatternRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?\\d+(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
-const hintPatternRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?hint(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
 const answerKeyword = `answer` // Must not have regex special characters
+const hintKeyword = `hint` // Must not have regex special characters
+const numPatternRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?\\d+(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
+const hintPatternRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?${hintKeyword}(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
 
 export class ClozePattern implements IClozePattern {
     private readonly _raw: string;
@@ -35,24 +36,33 @@ export class ClozePattern implements IClozePattern {
     constructor(raw: string) {
         this._raw = raw;
 
-        let _numMatch = numPatternRegex.exec(raw);
-        let _hintMatch = hintPatternRegex.exec(raw);
+        let _numPattern = numPatternRegex.exec(raw);
+        let _hintPattern = hintPatternRegex.exec(raw);
 
-        if (!_numMatch) {
+        if (!_numPattern) {
             throw new Error("No cloze number pattern found");
         }
-        if (!_hintMatch) {
+        if (!_hintPattern) {
             throw new Error("No cloze hint pattern found");
         }
         if (raw.indexOf(answerKeyword) == -1) {
             throw new Error(`No answer keyword (${answerKeyword}) found in the pattern.`);
         }
 
-        this.numPattern = _numMatch;
-        this.hintPattern = _hintMatch;
-        this.numRegex = ClozePattern.processPattern(_numMatch[0], (text: string) => text.replace(/\d+/g, "(\\d+)"));
-        this.seqRegex = ClozePattern.processPattern(_numMatch[0], (text: string) => text.replace(/\d+/g, "([ash]+)"));
-        this.hintRegex = ClozePattern.processPattern(_hintMatch[0], (text: string) => text.replace(/hint/g, "(.+?)"));
+        this.numPattern = _numPattern;
+        this.hintPattern = _hintPattern;
+        this.numRegex = ClozePattern.processPattern(_numPattern[0], (text: string) => text.replace(/\d+/g, "(\\d+)"));
+        this.seqRegex = ClozePattern.processPattern(_numPattern[0], (text: string) => text.replace(/\d+/g, "([ash]+)"));
+        this.hintRegex = ClozePattern.processPattern(_hintPattern[0], (text: string) => {
+            const charactersAfterHintKeyword = text.substring(text.indexOf(hintKeyword) + hintKeyword.length);
+            if (text.indexOf(hintKeyword) == 0 || charactersAfterHintKeyword.length == 0) {
+                // WARNING: No characters before hint keyword can lead to unexpected results when hint pattern is at the beginning of the pattern
+                // WARNING: No characters after hint keyword can lead to unexpected results when hint pattern is at the end of the pattern
+                return text.replace(hintKeyword, `(.+?)`);
+            }
+            // 1 or more of any character that is not the indicator of finishing the hint
+            return text.replace(hintKeyword, `((?:(?!${charactersAfterHintKeyword}).)+?)`)
+        });
 
         this.hintRegex = "(?:" + this.hintRegex + ")?"; // Cloze hint is always optional
 
@@ -68,10 +78,10 @@ export class ClozePattern implements IClozePattern {
     }
 
     private static processPattern(text: string, rplc: Function): string {
-        let ans = text.substring(1, text.length - 1);
-        ans = ans.replace(/\\\[/g, "[").replace(/\\]/g, "]");
+        let ans = text.substring(1, text.length - 1); // Remove the mandatory brackets
+        ans = ans.replace(/\\\[/g, "[").replace(/\\]/g, "]"); // Unescape user brackets (if any)
         ans = escapeRegexString(ans);
-        ans = rplc(ans);
+        ans = rplc(ans); // Inject the regex capture group
         return ans
     }
 
@@ -128,6 +138,10 @@ export class ClozePattern implements IClozePattern {
         return new ClozeRegExp(regexStr, pattern._clozeFieldOrder, 'g');
     }
 
+    get raw(): string {
+        return this._raw;
+    }
+
     get clozeFieldsOrder(): ClozeFieldEnum[] {
         return this._clozeFieldOrder;
     }
@@ -143,27 +157,6 @@ export class ClozePattern implements IClozePattern {
         clozeRegex = this.generateClozeRegexByType[clozeType](this);
         this.clozeRegexByType[clozeType] = clozeRegex;
         return clozeRegex;
-    }
-
-    hasClozeType(text: string, clozeType: ClozeTypeEnum): boolean {
-        for (const priorityType of ClozeTypesPriority) {
-            if (this.getClozeRegex(priorityType).test(text)) {
-                return clozeType == priorityType;
-            }
-        }
-
-        return false;
-    }
-
-    getClozeTypes(text: string): ClozeTypeEnum[] {
-        const clozeTypes: ClozeTypeEnum[] = [];
-        for (const priorityType of ClozeTypesPriority) {
-            if (this.getClozeRegex(priorityType).test(text)) {
-                clozeTypes.push(priorityType);
-            }
-        }
-
-        return clozeTypes;
     }
 
     getMainClozeType(text: string): ClozeTypeEnum | null {

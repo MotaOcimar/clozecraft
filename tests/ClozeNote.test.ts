@@ -14,18 +14,17 @@ const compareNotes = (noteA: IClozeNote, noteB: IClozeNote) => {
     }
 }
 
-test('ClozeNote SHOULD have the correct properties after creation', () => {
 
-    for ( const notesMock of ClozeNoteMocks ) {
-        const clozeCrafter = new ClozeCrafter( [notesMock.patternStr] );
-    
-        for (const noteMock of notesMock.noteList) {
+for ( const notesMock of ClozeNoteMocks ) {
+    const clozeCrafter = new ClozeCrafter( [notesMock.patternStr] );
+
+    for (const noteMock of notesMock.noteList) {
+        test(`ClozeNote SHOULD have the correct properties after creation WHEN ${noteMock._noteDescription}`, () => {
+
             const clozeNote = clozeCrafter.createClozeNote(noteMock.raw);
-        
-            if (!clozeNote) {
-                throw new Error("Cloze note is null but it shouldn't be.");
-            }
-            compareNotes(clozeNote, noteMock);
-        }
+
+            expect(clozeNote).not.toBeNull();
+            compareNotes(clozeNote!, noteMock);
+        });
     }
-});
+}

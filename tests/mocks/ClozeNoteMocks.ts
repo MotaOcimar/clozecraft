@@ -486,8 +486,79 @@ const commentWithFootnoteNotes = {
     ]
 }
 
+const hintAndSeqWithSamePatternNotes = {
+    patternStr: '→answer←[{hint}][{123}]',
+    noteList: [
+        {
+            _noteDescription: 'Both hint and sequence number/string have the same pattern. Classic cloze without hint in the first deletion, but with hint in the second deletion.',
+            clozeType: ClozeTypeEnum.CLASSIC,
+            raw: 'People from →Brazil←{1} are called →Brazilians←{nationality}{1}.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from [...] are called [nationality].';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
+            _noteDescription: 'Both hint and sequence number/string have the same pattern. Overlapped cloze without hint in the first deletion, but with hint in the second deletion.',
+            clozeType: ClozeTypeEnum.OVERLAPPING,
+            raw: 'People from →Brazil←{a} are called →Brazilians←{nationality}{a}.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from [...] are called [nationality].';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
+            _noteDescription: 'Both hint and sequence number/string have the same pattern. Simple cloze without hint in the first deletion, but with hint in the second deletion.',
+            clozeType: ClozeTypeEnum.SIMPLE,
+            raw: 'People from →Brazil← are called →Brazilians←{nationality}.',
+            numCards: 2,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from [...] are called Brazilians.';
+                    case 1:
+                        return 'People from Brazil are called [nationality].';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians.';
+                    case 1:
+                        return 'People from Brazil are called Brazilians.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        }
+    ]
+}
+
 export const ClozeNoteMocks = [
     ankiLikeNotes,
     boldClozeNotes,
-    commentWithFootnoteNotes
+    commentWithFootnoteNotes,
+    hintAndSeqWithSamePatternNotes
 ];
