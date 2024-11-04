@@ -1,7 +1,7 @@
 import { ClozeTypeEnum } from '../../src/implementation/ClozeTypeEnum';
 
 const ankiLikeNotes = {
-    patternStr: '{{[c123::]answer[::hint]}}',
+    patterns: ['{{[c123::]answer[::hint]}}'],
     noteList: [
         {
             _noteDescription: 'Classic Anki like note. With hints.',
@@ -163,7 +163,7 @@ const ankiLikeNotes = {
 };
 
 const boldClozeNotes = {
-    patternStr: '**[123::]answer[::hint]**',
+    patterns: ['**[123::]answer[::hint]**'],
     noteList: [
         {
             _noteDescription: 'Classic bold cloze note. With hints.',
@@ -325,7 +325,7 @@ const boldClozeNotes = {
 }
 
 const commentWithFootnoteNotes = {
-    patternStr: '==answer==[%%123%%][^\\[hint\\]]',
+    patterns: ['==answer==[%%123%%][^\\[hint\\]]'],
     noteList: [
         {
             _noteDescription: 'Classic "comment with footnote" note. With hints.',
@@ -487,7 +487,7 @@ const commentWithFootnoteNotes = {
 }
 
 const hintAndSeqWithSamePatternNotes = {
-    patternStr: '→answer←[{hint}][{123}]',
+    patterns: ['→answer←[{hint}][{123}]'],
     noteList: [
         {
             _noteDescription: 'Both hint and sequence number/string have the same pattern. Classic cloze without hint in the first deletion, but with hint in the second deletion.',
@@ -556,9 +556,208 @@ const hintAndSeqWithSamePatternNotes = {
     ]
 }
 
+const multiplePatternsNotes = {
+    patterns: [
+        '==answer==[{hint}][❰123❱]',
+        '**answer**[{hint}][❰123❱]',
+        '[{hint}]→answer←[❰123❱]',
+        '→answer←[❰123❱][{hint}]'
+    ],
+    noteList: [
+        // CLASSIC CLOZE NOTES
+        {
+            _noteDescription: 'It uses two non-conflicting patterns. Classic cloze note with two deletion without hint',
+            clozeType: ClozeTypeEnum.CLASSIC,
+            raw: 'People from ==Brazil==❰1❱ are called **Brazilians**❰1❱.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from [...] are called [...].';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
+            _noteDescription: 'It matches two patterns. Classic cloze note with one deletion without hint',
+            clozeType: ClozeTypeEnum.CLASSIC,
+            raw: 'People from Brazil are called →Brazilians←❰1❱.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called [...].';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
+            _noteDescription: 'It matches two patterns. Classic cloze note with one deletion with ambiguous hint',
+            clozeType: ClozeTypeEnum.CLASSIC,
+            raw: 'People from Brazil are called {nationality}→Brazilians←❰1❱{nationality}.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called [nationality]{nationality}.';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians{nationality}.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        // OVERLAPPED CLOZE NOTES
+        {
+            _noteDescription: 'It uses two non-conflicting patterns. Overlapped cloze note with two deletion without hint',
+            clozeType: ClozeTypeEnum.OVERLAPPING,
+            raw: 'People from ==Brazil==❰a❱ are called **Brazilians**❰a❱.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from [...] are called [...].';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
+            _noteDescription: 'It matches two patterns. Overlapped cloze note with one deletion without hint',
+            clozeType: ClozeTypeEnum.OVERLAPPING,
+            raw: 'People from Brazil are called →Brazilians←❰a❱.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called [...].';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
+            _noteDescription: 'It matches two patterns. Overlapped cloze note with one deletion with ambiguous hint',
+            clozeType: ClozeTypeEnum.OVERLAPPING,
+            raw: 'People from Brazil are called {nationality}→Brazilians←❰a❱{nationality}.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called [nationality]{nationality}.';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians{nationality}.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        // SIMPLE CLOZE NOTES
+        {
+            _noteDescription: 'It uses two non-conflicting patterns. Simple cloze note with two deletion without hint',
+            clozeType: ClozeTypeEnum.SIMPLE,
+            raw: 'People from ==Brazil== are called **Brazilians**.',
+            numCards: 2,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from [...] are called Brazilians.';
+                    case 1:
+                        return 'People from Brazil are called [...].';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians.';
+                    case 1:
+                        return 'People from Brazil are called Brazilians.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
+            _noteDescription: 'It matches two patterns. Simple cloze note with one deletion without hint',
+            clozeType: ClozeTypeEnum.SIMPLE,
+            raw: 'People from Brazil are called →Brazilians←.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called [...].';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
+            _noteDescription: 'It matches two patterns. Simple cloze note with one deletion with ambiguous hint',
+            clozeType: ClozeTypeEnum.SIMPLE,
+            raw: 'People from Brazil are called {nationality}→Brazilians←{nationality}.',
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called [nationality]{nationality}.';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'People from Brazil are called Brazilians{nationality}.';
+                }
+                throw new Error('Invalid card index.');
+            }
+        }
+    ]
+}
+
 export const ClozeNoteMocks = [
     ankiLikeNotes,
     boldClozeNotes,
     commentWithFootnoteNotes,
-    hintAndSeqWithSamePatternNotes
+    hintAndSeqWithSamePatternNotes,
+    multiplePatternsNotes
 ];

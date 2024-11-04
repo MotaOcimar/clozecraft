@@ -20,6 +20,7 @@ export class ClozeNoteSimple extends ClozeNote<ClozeDeletionSimple> {
 
         let clozeDeletions: ClozeDeletionSimple[] = [];
         let numCards = 0;
+        const deletionsAnsIndexes: Set<number> = new Set();
 
         patterns.forEach((pattern) => {
             const regex = pattern.getClozeRegex(ClozeTypeEnum.SIMPLE)
@@ -27,6 +28,11 @@ export class ClozeNoteSimple extends ClozeNote<ClozeDeletionSimple> {
             let match: IClozeRegExpExecArray | null;
 
             while (match = regex.exec(rawNote)) {
+                const ansIndex = match.index + match.raw.indexOf(match.answer);
+                if (deletionsAnsIndexes.has(ansIndex)) {
+                    break;
+                }
+                deletionsAnsIndexes.add(ansIndex);
 
                 numCards++;
 
@@ -39,7 +45,7 @@ export class ClozeNoteSimple extends ClozeNote<ClozeDeletionSimple> {
 
                 clozeDeletions.push(newCloze);
             }
-        })
+        });
 
         return { clozeDeletions, numCards };
     }

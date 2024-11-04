@@ -21,6 +21,7 @@ export class ClozeNoteOL extends ClozeNote<ClozeDeletionOL> {
 
         let clozeDeletions: ClozeDeletionOL[] = [];
         let numCards = 0;
+        const deletionsAnsIndexes: Set<number> = new Set();
 
         patterns.forEach((pattern) => {
             const regex = pattern.getClozeRegex(ClozeTypeEnum.OVERLAPPING)
@@ -31,6 +32,12 @@ export class ClozeNoteOL extends ClozeNote<ClozeDeletionOL> {
                 if (!match.seq) {
                     break;
                 }
+
+                const ansIndex = match.index + match.raw.indexOf(match.answer);
+                if (deletionsAnsIndexes.has(ansIndex)) {
+                    break;
+                }
+                deletionsAnsIndexes.add(ansIndex);
 
                 let newCloze: ClozeDeletionOL = {
                     raw: match.raw,

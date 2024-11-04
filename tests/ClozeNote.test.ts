@@ -16,7 +16,7 @@ const compareNotes = (noteA: IClozeNote, noteB: IClozeNote) => {
 
 
 for ( const notesMock of ClozeNoteMocks ) {
-    const clozeCrafter = new ClozeCrafter( [notesMock.patternStr] );
+    const clozeCrafter = new ClozeCrafter( notesMock.patterns );
 
     for (const noteMock of notesMock.noteList) {
         test(`ClozeNote SHOULD have the correct properties after creation WHEN ${noteMock._noteDescription}`, () => {

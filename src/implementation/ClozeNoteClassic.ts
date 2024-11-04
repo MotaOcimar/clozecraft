@@ -21,6 +21,7 @@ export class ClozeNoteClassic extends ClozeNote<ClozeDeletionClassic> {
 
         let clozeDeletions: ClozeDeletionClassic[] = [];
         let numCards = 0;
+        const deletionsAnsIndexes: Set<number> = new Set();
 
         patterns.forEach((pattern) => {
             const regex = pattern.getClozeRegex(ClozeTypeEnum.CLASSIC);
@@ -31,6 +32,12 @@ export class ClozeNoteClassic extends ClozeNote<ClozeDeletionClassic> {
                 if (!match.seq) {
                     break;
                 }
+
+                const ansIndex = match.index + match.raw.indexOf(match.answer);
+                if (deletionsAnsIndexes.has(ansIndex)) {
+                    break;
+                }
+                deletionsAnsIndexes.add(ansIndex);
 
                 let newCloze: ClozeDeletionClassic = {
                     raw: match.raw,
